@@ -101,6 +101,24 @@ public abstract class Weapon
 							 MathUtils.sin(angleToTarget)) );
 		}
 
+	protected Vector2 getSplitLeftTargetDir(Vector2 spawnPoint, Vector2 targetPos)
+		{
+		float angleToTarget = MathUtils.atan2(targetPos.y - spawnPoint.y,
+												targetPos.x - spawnPoint.x)-0.5f;
+
+		return (new Vector2(MathUtils.cos(angleToTarget),
+							MathUtils.sin(angleToTarget)));
+		}
+
+	protected Vector2 getSplitRightTargetDir(Vector2 spawnPoint, Vector2 targetPos)
+		{
+			float angleToTarget = MathUtils.atan2(targetPos.y - spawnPoint.y,
+													targetPos.x - spawnPoint.x)+0.5f;
+
+			return (new Vector2(MathUtils.cos(angleToTarget),
+					MathUtils.sin(angleToTarget)));
+		}
+
 	/**
 	 * Tells us whether enough time has passed for the Weapon to fire again
 	 *

@@ -80,7 +80,7 @@ public class PlayScreen implements Screen
 
 	/** Pre-defined weapon types for the Play Screen */
 	public Weapon basicWeapon,spokeWeapon,randomDirWeapon,baseFireEngWeapon,
-		largeFireEngWeapon;
+		largeFireEngWeapon, alienTruckWeapon;
 	// Game objects
 	/** Array containing all fire engine instances */;
 	private ArrayList<FireEngine> fireEngineArrayList = new ArrayList<>();
@@ -92,6 +92,15 @@ public class PlayScreen implements Screen
 
 	/** Standard fire engine with standard states */
 	private FireEngine normalFireEngine;
+
+	/** Smaller fire engine with lower health and water capacity
+     * but has fast movement and a smaller hitbox
+     */
+	private FireEngine smallFireEngine;
+
+	/** Alien fire engine with standard states that is only introduced
+     * later in the game, releases no  */
+	private FireEngine alienFireEngine;
 
 	/** The player */
 	private FireEngine player;
@@ -370,12 +379,14 @@ public class PlayScreen implements Screen
         new RandomDirProjectileSpawner( 0.5, this.slowLargeExplosiveProjectile, 6);
     this.baseFireEngWeapon = new BasicProjectileSpawner( 20, this.waterProjectile);
     this.largeFireEngWeapon = new BasicProjectileSpawner( 10, this.largewaterProjectile);
+    this.alienTruckWeapon = new AlienProjectileSpawner( 10, this.waterProjectile);
 
     this.weaponList.add(basicWeapon);
     this.weaponList.add(spokeWeapon);
     this.weaponList.add(randomDirWeapon);
     this.weaponList.add(baseFireEngWeapon);
-	  this.weaponList.add(largeFireEngWeapon);
+    this.weaponList.add(largeFireEngWeapon);
+    this.weaponList.add(alienTruckWeapon);
   }
 
 	/**
@@ -402,9 +413,20 @@ public class PlayScreen implements Screen
 				this, new Vector2(1.5f, 1), this.largeFireEngWeapon, 800, 15, 200,
 				Kroy.HEAVY_FIRE_ENGINE_TEX);
 
+		this.smallFireEngine =
+            new FireEngine(
+                    this, new Vector2(0.8f,0.4f), this.baseFireEngWeapon, 400, 25, 75,
+                    Kroy.SMALL_FIRE_ENGINE_TEX);
+
+		this.alienFireEngine =
+				new FireEngine(
+					this, new Vector2(0.8f,0.4f), this.alienTruckWeapon, 400, 25, 75,
+					Kroy.ALIEN_FIRE_ENGINE_TEX);
 
 		this.fireEngineArrayList.add(this.normalFireEngine);
 		this.fireEngineArrayList.add(this.largeFireEngine);
+        this.fireEngineArrayList.add(this.smallFireEngine);
+        this.fireEngineArrayList.add(this.alienFireEngine);
 
 		this.player = this.normalFireEngine;
 	  }

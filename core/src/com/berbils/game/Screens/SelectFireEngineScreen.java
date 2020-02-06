@@ -15,9 +15,11 @@ public class SelectFireEngineScreen extends BasicMenu
 	 */
 	private static String titlePath = Kroy.SELECT_FIRE_ENGINE_TITLE;
 
-	/** An array containing the text that will appear on its own button */
+	/** An array containing the text that will appear on its own button
+     *  The fire engine types: Regular, Large, Small, Alien
+     */
 	private static String[] menuOptions = new String[] { "Regular Fire Engine",
-		"Large Fire Engine"
+		"Large Fire Engine", "Small Fire Engine", "Alien Fire Engine"
 	};
 
 	/**
@@ -50,6 +52,29 @@ public class SelectFireEngineScreen extends BasicMenu
 					game.setScreen(game.gameScreen);
 					game.gameScreen.selectFireEngine(1);
 					Gdx.input.setInputProcessor(null);
+					}
+				});
+		super.menuButtons.get(2).addListener(
+		    new ClickListener()
+                {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y)
+                    {
+                    game.setScreen(game.gameScreen);
+                    game.gameScreen.selectFireEngine(2);
+                    Gdx.input.setInputProcessor(null);
+                    }
+                });
+
+		super.menuButtons.get(3).addListener(
+				new ClickListener()
+				{
+					@Override
+					public void clicked(InputEvent event, float x, float y)
+					{
+						game.setScreen(game.gameScreen);
+						game.gameScreen.selectFireEngine(3);
+						Gdx.input.setInputProcessor(null);
 					}
 				});
 		}

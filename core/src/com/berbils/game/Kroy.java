@@ -41,6 +41,8 @@ public class Kroy extends Game
 	public static final String EXPLOSION_TEX = "Projectiles/Explosion.png";
 	public static final String BASE_FIRE_ENGINE_TEX = "FireEngine/fireEngineBase.png";
 	public static final String HEAVY_FIRE_ENGINE_TEX = "FireEngine/fireEngineHeavy.png";
+	public static final String SMALL_FIRE_ENGINE_TEX = "FireEngine/fireEngineBaseGreen.png";
+	public static final String ALIEN_FIRE_ENGINE_TEX = "FireEngine/fireEngineHeavier.png";
 	public static final String OBSTACLE_TEX = "Obstacle.png";
 	public static final String WATER_PROJECTILE_TEX = "Projectiles/waterProjectile.png";
 	public static final String FIRESTATION_TEX = "FireStation/FireStation.png";
@@ -71,6 +73,8 @@ public class Kroy extends Game
 		assets = new AssetManager();
 		assets.load(Kroy.BASE_FIRE_ENGINE_TEX, Texture.class);
 		assets.load(Kroy.HEAVY_FIRE_ENGINE_TEX, Texture.class);
+		assets.load(Kroy.SMALL_FIRE_ENGINE_TEX, Texture.class);
+		assets.load(Kroy.ALIEN_FIRE_ENGINE_TEX, Texture.class);
 		assets.load(Kroy.REG_PROJECTILE_TEX, Texture.class);
 		assets.load(Kroy.EXPLOSION_TEX, Texture.class);
 		assets.load(Kroy.EXPLOSIVE_PROJECTILE_TEXTURE, Texture.class);
