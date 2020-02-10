@@ -73,6 +73,14 @@ public class GameContactListener implements ContactListener
 			this.getProjectilesObject(fixtureAUserData, fixtureBUserData)
 				.collided(this.getProjectilesFixture(fixtureA, fixtureB));
 		}
+		//projectile hitting patrol
+		else if (this.projectileContactPatrol(fixtureAUserData,
+				fixtureBUserData)) {
+			this.getPatrolObject(fixtureAUserData, fixtureBUserData)
+					.getHit();
+			this.getProjectilesObject(fixtureAUserData, fixtureBUserData)
+					.collided(this.getProjectilesFixture(fixtureA, fixtureB));
+		}
 		// Fire engine touching the fire station
 		else if (this.fireEngineContactFireStation(fixtureAUserData,
 												   fixtureBUserData)) {
@@ -89,7 +97,7 @@ public class GameContactListener implements ContactListener
 		}
 		}
 
-	/***
+		/***
 	 * This method is called whenever two objects no longer collide
 	 * @param contact The two objects that have stopped colliding
 	 */
@@ -205,6 +213,12 @@ public class GameContactListener implements ContactListener
             else if (obj2 instanceof AngrySensor) {
                 return ((AngrySensor) obj2).getPatrol();
             }
+            else if (obj1 instanceof AlienPatrol) {
+            	return (AlienPatrol) obj1;
+			}
+			else if (obj2 instanceof AlienPatrol) {
+				return (AlienPatrol) obj2;
+			}
             else {
                 throw new IllegalArgumentException("Neither arguments are patrols");
             }
@@ -311,6 +325,11 @@ public class GameContactListener implements ContactListener
 		return ( ( obj1 instanceof Projectiles && obj2 instanceof Tower )
 			|| ( obj1 instanceof Tower && obj2 instanceof Projectiles ) );
 		}
+
+	private boolean projectileContactPatrol(Object obj1, Object obj2) {
+		return ( ( obj1 instanceof Projectiles && obj2 instanceof AlienPatrol )
+				|| ( obj1 instanceof AlienPatrol && obj2 instanceof Projectiles ) );
+	}
 
 	/**
 	 *  A Method to check if the two objects colliding are a fire engine and a

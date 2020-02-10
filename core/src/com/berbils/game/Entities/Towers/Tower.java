@@ -11,6 +11,8 @@ import com.berbils.game.Entities.ProjectileSpawners.Weapon;
 import com.berbils.game.Kroy;
 import com.berbils.game.Screens.PlayScreen;
 
+import java.util.Random;
+
 /**
  * Creates a tower game object, an enemy object that attacks if the player
  * gets within a set range
@@ -32,6 +34,7 @@ public class Tower extends CircleGameEntity
 	 * and should be destroyed
 	 */
 	private boolean isAlive;
+	private boolean dead; //this one marks whether death events have occurred
 
 	/** The current target for teh tower to fire at, if null the tower is
 	 * automatically set to not active
@@ -82,6 +85,7 @@ public class Tower extends CircleGameEntity
 	/** the list of alien patrols it has currently spawned */
 	public AlienPatrol[] patrols;
 	public int numOfPatrols;
+	public int timeTillSpawn;
 
 	/**
 	 * Creates the tower base body, fixture and sprite.Also creates the tower
@@ -173,14 +177,14 @@ public class Tower extends CircleGameEntity
 		this.disengagedTowerTextureFP = textureFPDisengaged;
 		this.engagedTowerTextureFP = textureFPEngaged;
 		this.isActive = false;
+		this.dead=false;
 		this.isAlive = true;
 		this.healthBarPos = this.position.cpy().add(0, diam * 1.5f);
 		this.healthBarSize = new Vector2(diam * 2, 0.1f);
 
-		this.patrols = new AlienPatrol[10];
+		this.patrols = new AlienPatrol[2];
 		this.numOfPatrols=0;
-		//TEMP
-		this.spawnPatrol();
+		this.timeTillSpawn=60;
 
 		this.explosionOnDeath = new Explosion(this.screen,
 											  this.sizeDims.x * 1.5f,
@@ -248,10 +252,10 @@ public class Tower extends CircleGameEntity
 
 	/** spawns a new alien patrol */
 	public void spawnPatrol(){
-		if (numOfPatrols<10) {
+		if (numOfPatrols<patrols.length) {
 			patrols[numOfPatrols] = new AlienPatrol(
 					this,
-					new Vector2(1f, 1f),
+					new Vector2(0.8f, 0.8f),
 					5f,
 					4f,
 					this.position,
@@ -264,6 +268,15 @@ public class Tower extends CircleGameEntity
 		}
 	}
 
+	public void checkSpawn(){
+		this.timeTillSpawn--;
+		if (timeTillSpawn<=0){
+			this.spawnPatrol();
+			Random r = new Random();
+			this.timeTillSpawn=r.nextInt(300)+300;
+		}
+	}
+
 	/**
 	 * The amount of damage taken from being hit by a projectile
 	 *
@@ -273,7 +286,7 @@ public class Tower extends CircleGameEntity
 		{
 		this.currentHealth -= damageTaken;
 		if (currentHealth <= 0) {
-			this.onDeath();
+			this.isAlive=false;
 		}
 		}
 
@@ -287,7 +300,12 @@ public class Tower extends CircleGameEntity
 	 */
 	public void onDeath()
 		{
-		if (this.isAlive) {
+		for (AlienPatrol patrol : patrols){
+			if (patrol!=null) patrol.killTower();
+		}
+
+		if (!this.dead) {
+			this.dead=true;
 			Kroy game = this.screen.getGame();
 			this.screen.towerDestroyed();
 			if (this.screen.allTowersDestroyed()) {
@@ -344,12 +362,16 @@ public class Tower extends CircleGameEntity
 	 * is updated and any explosions caused by the death of the tower are
 	 * updated to go away after a set amount of time via this
 	 *
+	 * Also checks whether a new patrol should be spawned
+	 *
 	 * @param deltaTime The time in seconds that have elapsed in world time
 	 * 	                (Excludes time taken to draw, render etc) since the
 	 * 	                last Gdx delta call.
 	 */
 	public void update(float deltaTime)
 		{
+		if (!this.isAlive) this.onDeath();
+		this.checkSpawn();
 		float percentHealth = this.currentHealth / this.maxHealth;
 		this.spriteHandler.setSpriteSize(this.healthBarSize.cpy().scl(
 			percentHealth,
