@@ -80,7 +80,8 @@ public class Tower extends CircleGameEntity
 	private Explosion explosionOnDeath;
 
 	/** the list of alien patrols it has currently spawned */
-	private Array<AlienPatrol> patrols;
+	public AlienPatrol[] patrols;
+	public int numOfPatrols;
 
 	/**
 	 * Creates the tower base body, fixture and sprite.Also creates the tower
@@ -126,6 +127,8 @@ public class Tower extends CircleGameEntity
 			  true,
 			  Kroy.CAT_ENEMY,
 			  Kroy.MASK_ENEMY,
+			  0,
+			  0,
 			  1);
 		super.setUserData(this);
 		this.defineStats(range,
@@ -136,8 +139,6 @@ public class Tower extends CircleGameEntity
 		this.createSensor();
 		this.setWeapon(weapon);
 		this.createHealthBar();
-		this.patrols = new Array<>();
-
 		}
 
 	/**
@@ -176,8 +177,10 @@ public class Tower extends CircleGameEntity
 		this.healthBarPos = this.position.cpy().add(0, diam * 1.5f);
 		this.healthBarSize = new Vector2(diam * 2, 0.1f);
 
+		this.patrols = new AlienPatrol[10];
+		this.numOfPatrols=0;
 		//TEMP
-			this.spawnPatrol();
+		this.spawnPatrol();
 
 		this.explosionOnDeath = new Explosion(this.screen,
 											  this.sizeDims.x * 1.5f,
@@ -200,7 +203,9 @@ public class Tower extends CircleGameEntity
 				null,
 				true,
 				Kroy.CAT_TOWER_SENSOR,
-				Kroy.MASK_TOWER_SENSOR, 1);
+				Kroy.MASK_TOWER_SENSOR,
+				0,
+				0,1);
 		this.towerSensor.setSensor(true);
 		this.towerSensor.setUserData(this);
 		}
@@ -243,17 +248,20 @@ public class Tower extends CircleGameEntity
 
 	/** spawns a new alien patrol */
 	public void spawnPatrol(){
-		AlienPatrol patrol = new AlienPatrol(
-				this,
-				0.75f,
-				10f,
-				5f,
-				this.position,
-				this.screen,
-				Kroy.PATROL_DISENGAGED,
-				Kroy.PATROL_ALERTED,
-				Kroy.PATROL_ATTACKING_DOWN
-		);
+		if (numOfPatrols<10) {
+			patrols[numOfPatrols] = new AlienPatrol(
+					this,
+					new Vector2(1f, 1f),
+					5f,
+					4f,
+					this.position,
+					this.screen,
+					Kroy.PATROL_DISENGAGED,
+					Kroy.PATROL_ALERTED,
+					Kroy.PATROL_ATTACKING_DOWN
+			);
+			numOfPatrols++;
+		}
 	}
 
 	/**

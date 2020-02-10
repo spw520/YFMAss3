@@ -45,6 +45,8 @@ public class CircleGameEntity extends Entity
 			new Vector2(0, 0),
 			textureFilePath,
 			isStatic,
+			0,
+			0, //these values might be replaced later on
 			spriteLayer
 			);
 
@@ -86,13 +88,17 @@ public class CircleGameEntity extends Entity
 		String textureFilePath,
 		boolean isStatic,
 		short catBits,
-		short maskBits, int spriteLayer)
+		short maskBits,
+		float angDamp,
+		float linDamp, int spriteLayer)
 		{
 		super(screen,
 			  new Vector2(diam, diam),
 			  pos,
 			  textureFilePath,
 			  isStatic,
+			  angDamp,
+			  linDamp,
 			  spriteLayer
 			 );
 

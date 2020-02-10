@@ -1,6 +1,9 @@
 package com.berbils.game.Handlers;
 
 import com.badlogic.gdx.physics.box2d.*;
+import com.berbils.game.Entities.AlienPatrols.AlienPatrol;
+import com.berbils.game.Entities.AlienPatrols.Sensors.AlertSensor;
+import com.berbils.game.Entities.AlienPatrols.Sensors.AngrySensor;
 import com.berbils.game.Entities.FireEngines.FireEngine;
 import com.berbils.game.Entities.FireStation.FireStation;
 import com.berbils.game.Entities.ProjectileSpawners.ProjectileTypes.Projectiles;
@@ -39,6 +42,19 @@ public class GameContactListener implements ContactListener
 				.setTarget(this.getFireEngineObject(fixtureAUserData,
 													fixtureBUserData).getBody());
 		}
+        // Fire engine getting in range of a patrol
+        else if (this.fireEngContactPatrolAlertSensor(fixtureAUserData,
+                fixtureBUserData)) {
+            this.getPatrolObject(fixtureAUserData, fixtureBUserData)
+                    .setActive(true);
+        }
+        // Fire engine getting in range of an angry patrol
+        else if (this.fireEngContactPatrolAngrySensor(fixtureAUserData,
+                fixtureBUserData)) {
+            this.getPatrolObject(fixtureAUserData, fixtureBUserData)
+                    .setTarget(this.getFireEngineObject(fixtureAUserData,
+                            fixtureBUserData).getBody());
+        }
 		// A projectile hitting a fire engine
 		else if (this.projectileContactFireEngine(fixtureAUserData,
 												  fixtureBUserData)) {
@@ -96,6 +112,12 @@ public class GameContactListener implements ContactListener
 			this.getTowerObject(fixtureAUserData, fixtureBUserData).setTarget(
 				null);
 		}
+        // Fire engine leaving alert range of a patrol
+        else if (this.fireEngContactPatrolAlertSensor(fixtureAUserData,
+                fixtureBUserData)) {
+            this.getPatrolObject(fixtureAUserData, fixtureBUserData)
+                    .setActive(false);
+        }
 		// Fire engine left fire station
 		else if (this.fireEngineContactFireStation(fixtureAUserData,
 												   fixtureBUserData)) {
@@ -135,6 +157,19 @@ public class GameContactListener implements ContactListener
 			|| ( obj1 instanceof FireEngine && obj2 instanceof Tower ) );
 		}
 
+	private boolean fireEngContactPatrolAlertSensor(Object obj1, Object obj2)
+        {
+            return ( ( obj1 instanceof AlertSensor && obj2 instanceof FireEngine )
+                    || ( obj1 instanceof FireEngine && obj2 instanceof AlertSensor ) );
+        }
+
+    private boolean fireEngContactPatrolAngrySensor(Object obj1, Object obj2)
+        {
+            return ( ( obj1 instanceof AngrySensor && obj2 instanceof FireEngine )
+                    || ( obj1 instanceof FireEngine && obj2 instanceof AngrySensor ) );
+        }
+
+
 	/**
 	 * Gets the @{@link Tower} object out of the two objects collided
 	 *
@@ -155,6 +190,25 @@ public class GameContactListener implements ContactListener
 			throw new IllegalArgumentException("Neither arguments are towers");
 		}
 		}
+
+    private AlienPatrol getPatrolObject(Object obj1, Object obj2)
+        {
+            if (obj1 instanceof AlertSensor) {
+                return ((AlertSensor) obj1).getPatrol();
+            }
+            else if (obj2 instanceof AlertSensor) {
+                return ((AlertSensor) obj2).getPatrol();
+            }
+            else if (obj2 instanceof AngrySensor) {
+                return ((AngrySensor) obj2).getPatrol();
+            }
+            else if (obj2 instanceof AngrySensor) {
+                return ((AngrySensor) obj2).getPatrol();
+            }
+            else {
+                throw new IllegalArgumentException("Neither arguments are patrols");
+            }
+        }
 
 	/**
 	 * Gets the {@link FireEngine} object out of the two objects collided

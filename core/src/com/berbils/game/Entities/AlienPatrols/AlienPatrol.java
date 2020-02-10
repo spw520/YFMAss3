@@ -3,6 +3,8 @@ package com.berbils.game.Entities.AlienPatrols;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.berbils.game.Entities.AlienPatrols.Sensors.AlertSensor;
+import com.berbils.game.Entities.AlienPatrols.Sensors.AngrySensor;
 import com.berbils.game.Entities.EntityTypes.BoxGameEntity;
 import com.berbils.game.Entities.EntityTypes.CircleGameEntity;
 import com.berbils.game.Entities.ProjectileSpawners.ProjectileTypes.Explosion;
@@ -11,11 +13,13 @@ import com.berbils.game.Entities.Towers.Tower;
 import com.berbils.game.Kroy;
 import com.berbils.game.Screens.PlayScreen;
 
+import java.util.Random;
+
 /**
  * Creates a tower game object, an enemy object that attacks if the player
  * gets within a set range
  */
-public class AlienPatrol extends CircleGameEntity
+public class AlienPatrol extends BoxGameEntity
 {
     /** The boolean for telling the patrol whether a target is within it's range.
      */
@@ -59,8 +63,8 @@ public class AlienPatrol extends CircleGameEntity
     /** Two circles that define where the patrol stops and notices a truck and where
      * the patrol rushes to attack a truck.
      */
-    private CircleGameEntity alertSensor;
-    private CircleGameEntity angrySensor;
+    private AlertSensor alertSensor;
+    private AngrySensor angrySensor;
 
     /** The range that the patrol can alert in and attack in*/
     private float alertRange;
@@ -76,13 +80,18 @@ public class AlienPatrol extends CircleGameEntity
     /** The current location the patrol is moving towards directly */
     private Vector2 moveLoc;
 
+    /** The amount of time until the patrol will stop moving */
+    private int timeToStop;
+    private int timeToMove;
+    private int timeToBeAngry;
+
     /**
      * Creates the patrol base body, fixture and sprite. Also creates the patrol
      * sensor bodies and fixtures in addition to variable assignment.
      *
      * @param tower         The tower the patrol belongs to
      *
-     * @param diameter     The diameter of the patrol base in meters
+     * @param vec     The diameter of the patrol base in meters
      *
      * @param alertRange   The range of the patrol in meters (The
      * 	 *                 size of the first patrol sensor entity)
@@ -105,7 +114,7 @@ public class AlienPatrol extends CircleGameEntity
      * 	                            the patrol does have a target in its second range     */
     public AlienPatrol(
             Tower tower,
-            float diameter,
+            Vector2 vec,
             float alertRange,
             float angryRange,
             Vector2 pos,
@@ -115,17 +124,19 @@ public class AlienPatrol extends CircleGameEntity
             String textureFilePathAngry)
     {
         super(screen,
-                diameter,
+                vec,
                 pos,
                 textureFilePathDisengaged,
                 false,
                 Kroy.CAT_FRIENDLY,
                 Kroy.MASK_FRIENDLY,
-                1);
-        super.setUserData(this);
+                5f,
+                5f,
+                2);
+
         this.defineStats(alertRange,
                 angryRange,
-                diameter,
+                vec,
                 textureFilePathDisengaged,
                 textureFilePathAlert,
                 textureFilePathAngry);
@@ -141,7 +152,7 @@ public class AlienPatrol extends CircleGameEntity
      *
      * @param angryRange            The angry range of the patrol in meters
      *
-     * @param diam					The diameter of the patrol base in meters
+     * @param vec					The diameter of the patrol base in meters
      *
      * @param textureDisengaged	The file path for the texture for when
      *                              the patrol does not have a target in
@@ -156,7 +167,7 @@ public class AlienPatrol extends CircleGameEntity
     private void defineStats(
             float alertRange,
             float angryRange,
-            float diam,
+            Vector2 vec,
             String textureDisengaged,
             String textureEngaged,
             String textureAngry)
@@ -171,7 +182,10 @@ public class AlienPatrol extends CircleGameEntity
         this.isAlive = true;
         this.isAngry = false;
         this.towerAlive = true;
-        this.speed = 40;
+        this.speed = 0.5f;
+        this.timeToMove = 80;
+        this.timeToStop = 0;
+        this.timeToBeAngry = 0;
     }
 
     /**
@@ -181,16 +195,14 @@ public class AlienPatrol extends CircleGameEntity
     private void createAlertSensor()
     {
         this.alertSensor =
-                new CircleGameEntity(
+                new AlertSensor(
                         this.screen,
                         this.alertRange,
                         this.position,
-                        null,
-                        true,
                         Kroy.CAT_TOWER_SENSOR,
-                        Kroy.MASK_TOWER_SENSOR, 1);
-        this.alertSensor.setSensor(true);
-        this.alertSensor.setUserData(this);
+                        Kroy.MASK_TOWER_SENSOR,
+                        this);
+        this.alertSensor.setUserData(this.alertSensor);
     }
 
     /**
@@ -200,16 +212,14 @@ public class AlienPatrol extends CircleGameEntity
     private void createAngrySensor()
     {
         this.angrySensor =
-                new CircleGameEntity(
+                new AngrySensor(
                         this.screen,
                         this.angryRange,
                         this.position,
-                        null,
-                        true,
                         Kroy.CAT_TOWER_SENSOR,
-                        Kroy.MASK_TOWER_SENSOR, 1);
-        this.angrySensor.setSensor(true);
-        this.angrySensor.setUserData(this);
+                        Kroy.MASK_TOWER_SENSOR,
+                        this);
+        this.angrySensor.setUserData(this.angrySensor);
     }
 
     /**
@@ -239,68 +249,66 @@ public class AlienPatrol extends CircleGameEntity
     }
 
     /**
-     * called when target enters angry range, sets the attack animation into effect, meaning:
-     * sets angry to true
-     * sets the position to move towards to the current location of the target
-     * while angry is true, nothing else can happen (can't become passive/alert)
-     * @param target
-     */
-    public void targetInAngry(Body target) {
-        this.currentTarget = target;
-        this.isAngry = true;
-        this.moveLoc = new Vector2(0,0); // TODO: code that calculates the target location
-    }
-
-    /**
-     * Called when the target location for movement has been reached.
-     */
-    public void reachLocation() {
-        this.isAngry=false;
-        this.isMoving=false;
-        this.moveLoc=null;
-    }
-
-    /**
-     * Called when a truck enters the alert range.
-     * Changes the sprite and stops random movement
+     * Called when a truck enters the angry range. Sets the patrol to be angry, moving towards the player
+     * in mindless fury. It stops after two seconds of a faster lunge.
      *
      * @param target the target Box2D body to attack/fire at
      */
     public void setTarget(Body target)
     {
-        this.currentTarget = target;
-        if (this.isAlive && !this.isAngry) {
-            if (this.currentTarget == null) {
-                this.setActive(false);
-                this.spriteHandler.setSpriteTexture(this.entityFixture,
-                        this.passivePatrolTexture);
-            }
-            else {
-                this.setActive(true);
-                this.spriteHandler.setSpriteTexture(this.entityFixture,
-                        this.alertPatrolTexture);
-            }
-        }
+        this.isAngry=true;
+        this.timeToBeAngry = 90;
+        Vector2 truckC = target.getPosition();
+        this.moveLoc = new Vector2(
+                (-this.getLocation().x+truckC.x)*2,
+                (-this.getLocation().y+truckC.y)*2
+        );
     }
 
     /**
      *  Sets the state of the patrol to alert or not
      * @param active true = The tower can fire, False = The tower can not fire
      */
-    private void setActive(boolean active)
+    public void setActive(boolean active)
     {
         if(!this.isAngry) this.isActive = active;
+        this.stopMoving();
     }
 
     /**
      * picks a random location and sets that to be where the patrol is moving towards.
      */
     private void pickRandomLoc() {
+        Random r = new Random();
+        double direction = r.nextInt(360);
+        double radDir = Math.toRadians(direction);
+        this.isMoving   =  true;
+        this.timeToStop =  r.nextInt(60);
 
+        //sets moveloc to where to aim for
+        this.moveLoc = new Vector2(
+                10*(float)Math.cos(radDir),
+                10*(float)Math.sin(radDir));
     }
 
     private Vector2 getLocation() {
-        return this.position;
+        return this.entityBody.getPosition();
+    }
+
+    private void updateSprite() {
+        if (this.isAngry) {
+            this.spriteHandler.setSpriteTexture(this.entityFixture,
+                    this.angryPatrolTexture);
+        }
+        else if (this.isActive) {
+            this.spriteHandler.setSpriteTexture(this.entityFixture,
+                                                this.alertPatrolTexture);
+        }
+        else {
+            this.spriteHandler.setSpriteTexture(this.entityFixture,
+                    this.passivePatrolTexture);
+        }
+        this.alertSensor.getBody().setTransform(this.getLocation(),0);
     }
 
     /**
@@ -308,9 +316,24 @@ public class AlienPatrol extends CircleGameEntity
      */
     private void move() {
         this.getBody().setLinearVelocity(new Vector2(
-                this.speed*(-this.position.x+this.moveLoc.x),
-                this.speed*(-this.position.y+this.moveLoc.y)
+                this.speed*(this.moveLoc.x),
+                this.speed*(this.moveLoc.y)
         ));
+        this.timeToStop--;
+    }
+
+    /** stops the whole thing from moving, sets waittime */
+    private void stopMoving() {
+        this.isMoving=false;
+        this.timeToStop=0;
+        this.timeToMove=80;
+        this.getBody().setLinearVelocity(new Vector2(0,0));
+    }
+
+    private void stopBeingAngry(){
+        this.isAngry=false;
+        this.isActive=false;
+        this.isMoving=false;
     }
 
     /***
@@ -323,11 +346,29 @@ public class AlienPatrol extends CircleGameEntity
      */
     public void update(float deltaTime)
     {
-        if(this.isMoving) {
+        if (this.isAngry) {
+            //don't give a shit and MOVE
             this.move();
+            this.timeToBeAngry--;
+            if(this.timeToBeAngry<=0){
+                this.stopBeingAngry();
+            }
+        }
+        else if (this.isActive) {
+            //freeze and be active
+        }
+        else if(this.isMoving) {
+            this.move();
+            if (this.timeToStop<=0) {
+                this.stopMoving();
+            }
         }
         else if(!this.isAngry && !this.isActive) {
-            //TODO: Timer function that randomly calls pickLoc();
+            this.timeToMove--;
+            if (timeToMove <=0) this.pickRandomLoc();
         }
+        this.updateSprite();
+        this.alertSensor.setLocation(this.getLocation());
+        this.angrySensor.setLocation(this.getLocation());
     }
 }
