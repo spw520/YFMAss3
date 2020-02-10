@@ -32,6 +32,10 @@ public class Kroy extends Game
 	public static final String TUT_TOWER_DISENGAGED_TEX = "TowerTextures/tutorialTowerDisengaged.png";
 	public static final String SPOKE_TOWER_ENGAGED_TEX = "TowerTextures/SpokeTowerEngaged.png";
 	public static final String SPOKE_TOWER_DISENGAGED_TEX = "TowerTextures/SpokeTowerDisengaged.png";
+	public static final String PATROL_DISENGAGED = "AlienPatrols/alienDeactivated.png";
+	public static final String PATROL_ALERTED = "AlienPatrols/alienSpotted.png";
+	public static final String PATROL_ATTACKING_UP = "AlienPatrols/alienAngryUp.png";
+	public static final String PATROL_ATTACKING_DOWN = "AlienPatrols/alienAngryDown.png";
 	public static final String EXPLOSIVE_TOWER_ENGAGED_TEX =
 		"TowerTextures/ExplosiveTowerEngaged.png";
 	public static final String EXPLOSIVE_TOWER_DISENGAGED_TEX =
@@ -84,6 +88,10 @@ public class Kroy extends Game
 		assets.load(Kroy.SPOKE_TOWER_ENGAGED_TEX, Texture.class);
 		assets.load(Kroy.EXPLOSIVE_TOWER_DISENGAGED_TEX, Texture.class);
 		assets.load(Kroy.EXPLOSIVE_TOWER_ENGAGED_TEX, Texture.class);
+		assets.load(Kroy.PATROL_ALERTED, Texture.class);
+		assets.load(Kroy.PATROL_ATTACKING_DOWN, Texture.class);
+		assets.load(Kroy.PATROL_ATTACKING_UP, Texture.class);
+		assets.load(Kroy.PATROL_DISENGAGED, Texture.class);
 		assets.load(Kroy.OBSTACLE_TEX, Texture.class);
 		assets.load(Kroy.WATER_PROJECTILE_TEX, Texture.class);
 		assets.load(Kroy.FIRESTATION_TEX, Texture.class);

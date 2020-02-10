@@ -3,6 +3,8 @@ package com.berbils.game.Entities.Towers;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
+import com.berbils.game.Entities.AlienPatrols.AlienPatrol;
 import com.berbils.game.Entities.EntityTypes.CircleGameEntity;
 import com.berbils.game.Entities.ProjectileSpawners.ProjectileTypes.Explosion;
 import com.berbils.game.Entities.ProjectileSpawners.Weapon;
@@ -77,6 +79,9 @@ public class Tower extends CircleGameEntity
 	 * death */
 	private Explosion explosionOnDeath;
 
+	/** the list of alien patrols it has currently spawned */
+	private Array<AlienPatrol> patrols;
+
 	/**
 	 * Creates the tower base body, fixture and sprite.Also creates the tower
 	 * sensor body and fixture in addition to variable assignment.
@@ -131,6 +136,7 @@ public class Tower extends CircleGameEntity
 		this.createSensor();
 		this.setWeapon(weapon);
 		this.createHealthBar();
+		this.patrols = new Array<>();
 
 		}
 
@@ -169,6 +175,9 @@ public class Tower extends CircleGameEntity
 		this.isAlive = true;
 		this.healthBarPos = this.position.cpy().add(0, diam * 1.5f);
 		this.healthBarSize = new Vector2(diam * 2, 0.1f);
+
+		//TEMP
+			this.spawnPatrol();
 
 		this.explosionOnDeath = new Explosion(this.screen,
 											  this.sizeDims.x * 1.5f,
@@ -231,6 +240,21 @@ public class Tower extends CircleGameEntity
 
 		}
 		}
+
+	/** spawns a new alien patrol */
+	public void spawnPatrol(){
+		AlienPatrol patrol = new AlienPatrol(
+				this,
+				0.75f,
+				10f,
+				5f,
+				this.position,
+				this.screen,
+				Kroy.PATROL_DISENGAGED,
+				Kroy.PATROL_ALERTED,
+				Kroy.PATROL_ATTACKING_DOWN
+		);
+	}
 
 	/**
 	 * The amount of damage taken from being hit by a projectile
