@@ -43,6 +43,8 @@ public class BoxGameEntity extends Entity
 			  new Vector2(0, 0),
 			  textureFilePath,
 			  isStatic,
+			  0, //these values might be replaced later on
+			  0,
 			  spriteLayer
 			 );
 
@@ -79,6 +81,8 @@ public class BoxGameEntity extends Entity
 		boolean isStatic,
 		short catBits,
 		short maskBits,
+		float angDamp,
+		float linDamp,
 		int spriteLayer)
 		{
 		super(screen,
@@ -86,6 +90,8 @@ public class BoxGameEntity extends Entity
 			  pos,
 			  textureFilePath,
 			  isStatic,
+			  angDamp,
+			  linDamp,
 			  spriteLayer
 			 );
 

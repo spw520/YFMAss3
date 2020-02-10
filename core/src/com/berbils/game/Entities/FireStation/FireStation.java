@@ -40,6 +40,8 @@ public class FireStation extends BoxGameEntity
 			  true,
 			  Kroy.CAT_FRIENDLY,
 			  Kroy.MASK_FRIENDLY,
+			  0,
+			  0,
 			  1 // Sprite Layer 1 as it must be drawn under the fire engine
 			 );
 		super.setSensor(true); // Set as a sensor as the player will spawn on it

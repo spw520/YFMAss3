@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.berbils.game.Entities.AlienPatrols.AlienPatrol;
 import com.berbils.game.Entities.FireEngines.FireEngine;
 import com.berbils.game.Entities.FireStation.FireStation;
 import com.berbils.game.Entities.ProjectileSpawners.*;
@@ -280,6 +281,9 @@ public class PlayScreen implements Screen
     for (Tower tower : towers) {
       tower.fire();
       tower.update(delta);
+      for (AlienPatrol patrol : tower.patrols) {
+          if(patrol!=null) patrol.update(delta);
+      }
     }
 
     for (Projectiles projectiles : projectileList) {
@@ -317,7 +321,7 @@ public class PlayScreen implements Screen
 		hud.stage.draw();
 		// If change false to true, the box2D debug renderer will render box2D
 		// body outlines
-		if(false) {
+		if(true) {
 		b2dr.render(world, gameCam.combined.scl(PPM));
 		}
 	}

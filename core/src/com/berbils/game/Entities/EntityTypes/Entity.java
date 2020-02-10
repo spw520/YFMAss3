@@ -71,6 +71,13 @@ public abstract class Entity
 	/** The entities texture, set to null if the entity doesn't need a sprite */
 	private Texture entityTexture;
 
+	/** linear and angular dampening */
+	private float angDamp;
+	private float linDamp;
+
+	/** type of sensor, used only for the alienpatrol instances*/
+	private String type;
+
 	/**
 	 * A constructor defining all entity properties
 	 *
@@ -93,13 +100,15 @@ public abstract class Entity
 	 *                        to determine draw order. 0 Is the bottom layer
 	 */
 	protected Entity(
-		PlayScreen screen, Vector2 sizeDims, Vector2 pos, String textureFilePath, boolean isStatic, int spriteLayer)
+		PlayScreen screen, Vector2 sizeDims, Vector2 pos, String textureFilePath, boolean isStatic, float angDamp, float linDamp, int spriteLayer)
 		{
 		this.screen = screen;
 		this.position = pos;
 		this.sizeDims = sizeDims;
 		this.world = screen.getWorld();
 		this.isStatic = isStatic;
+		this.angDamp = angDamp;
+		this.linDamp = linDamp;
 		this.spriteHandler = this.screen.getSpriteHandler();
 		this.spriteLayer = spriteLayer;
 
@@ -121,6 +130,8 @@ public abstract class Entity
 		{
 		this.entityBodyDefinition = new BodyDef();
 		this.entityBodyDefinition.position.set(this.position);
+		this.setBodyDefAngularDampening(angDamp);
+		this.setBodyDefLinearDampening(linDamp);
 
 		// Defines the Box2D body type
 		if (this.isStatic) {
@@ -172,8 +183,6 @@ public abstract class Entity
 		this.entityFixture = this.entityBody.createFixture(this.entityFixtureDefinition);
 		}
 
-
-
 	/**
 	 * Creates a sprite attached to the entitity
 	 * Note - will not create a sprite if its texture is null
@@ -207,8 +216,6 @@ public abstract class Entity
 	 * */
 	public abstract Vector2 getSizeDims();
 
-
-
 	/**
 	 *  Sets the angular dampening for all future Box2d bodies created
 	 * @param angleDamp The amount of angular dampening to apply to a body
@@ -217,7 +224,6 @@ public abstract class Entity
 		{
 		this.entityBodyDefinition.angularDamping = angleDamp;
 		}
-
 
 	/**
 	 *  Sets the linear dampening for all future Box2d bodies created
@@ -302,6 +308,12 @@ public abstract class Entity
 		this.entityFixture.setSensor(val);
 		}
 
+	public void setSensor(boolean val, String key)
+		{
+			this.entityFixture.setSensor(val);
+			this.type = key;
+		}
+
 	/**
 	 * Setter for the class variable entityShape
 	 * Sets the shape for the Bodies created by this entity
@@ -315,7 +327,7 @@ public abstract class Entity
 
 
 	/**
-	 * Sets the user data of the spawned fixture and body curently attached to
+	 * Sets the user data of the spawned fixture and body currently attached to
 	 * this entity
 	 *
 	 * @param userData The userData you wish the currentbody and
@@ -327,11 +339,4 @@ public abstract class Entity
 		this.entityFixture.setUserData(userData);
 		this.entityBody.setUserData(userData);
 		}
-
-
-
-
-
-
-
 	}

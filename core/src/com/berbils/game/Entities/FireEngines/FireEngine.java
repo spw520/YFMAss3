@@ -104,7 +104,7 @@ public class FireEngine extends BoxGameEntity
 			dimensions,
 			textureFilePath,
 			false,
-			2 // Sprite Layer is two as needs to be drwan on top of both
+			2 // Sprite Layer is two as needs to be drawn on top of both
 						// towers and fire station
 		);
 		super.setFixtureCategory(Kroy.CAT_FRIENDLY, Kroy.MASK_FRIENDLY);
