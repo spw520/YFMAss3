@@ -75,7 +75,7 @@ public class AlienPatrol extends BoxGameEntity
 
     /** The tower the patrol belongs to, and whether or not that tower is still alive */
     private Tower tower;
-    private Boolean towerAlive;
+    public Boolean towerAlive;
 
     /** The current location the patrol is moving towards directly */
     private Vector2 moveLoc;
@@ -128,8 +128,8 @@ public class AlienPatrol extends BoxGameEntity
                 pos,
                 textureFilePathDisengaged,
                 false,
-                Kroy.CAT_FRIENDLY,
-                Kroy.MASK_FRIENDLY,
+                Kroy.CAT_ENEMY,
+                Kroy.MASK_ENEMY,
                 5f,
                 5f,
                 2);
@@ -235,18 +235,6 @@ public class AlienPatrol extends BoxGameEntity
         }
     }
 
-    /**
-     *  Called when it is hit by a water projectile and the tower it belongs to is destroyed
-     */
-    public void onDeath()
-    {
-        this.isAlive = false;
-        this.setTarget(null);
-        this.screen.updatePlayerScore(100);
-        this.screen.destroyBody(this.alertSensor.getFixture().getBody());
-        this.screen.destroyBody(this.angrySensor.getFixture().getBody());
-        this.spriteHandler.destroySpriteAndBody(this.entityFixture);
-    }
 
     /**
      * Called when a truck enters the angry range. Sets the patrol to be angry, moving towards the player
@@ -256,14 +244,19 @@ public class AlienPatrol extends BoxGameEntity
      */
     public void setTarget(Body target)
     {
-        this.isAngry=true;
-        this.timeToBeAngry = 90;
-        Vector2 truckC = target.getPosition();
-        this.moveLoc = new Vector2(
-                (-this.getLocation().x+truckC.x)*2,
-                (-this.getLocation().y+truckC.y)*2
-        );
+        if (target!=null && !this.isRunning) {
+            this.isAngry = true;
+            this.timeToBeAngry = 90;
+            Vector2 truckC = target.getPosition();
+            this.moveLoc = new Vector2(
+                    (-this.getLocation().x + truckC.x) * 2,
+                    (-this.getLocation().y + truckC.y) * 2
+            );
+        }
     }
+
+    /** Kills the tower, marking this patrol as a lonely orphan. */
+    public void killTower() {this.towerAlive=false;}
 
     /**
      *  Sets the state of the patrol to alert or not
@@ -271,7 +264,7 @@ public class AlienPatrol extends BoxGameEntity
      */
     public void setActive(boolean active)
     {
-        if(!this.isAngry) this.isActive = active;
+        if(!this.isAngry && !this.isRunning) this.isActive = active;
         this.stopMoving();
     }
 
@@ -330,10 +323,50 @@ public class AlienPatrol extends BoxGameEntity
         this.getBody().setLinearVelocity(new Vector2(0,0));
     }
 
-    private void stopBeingAngry(){
+    public void getHit(){
+        if (!this.isRunning){
+            this.isRunning=true;
+            this.isAngry=false;
+            this.isActive=false;
+            this.moveLoc=new Vector2(
+                    -this.getLocation().x+this.tower.getBody().getPosition().x,
+                    -this.getLocation().y+this.tower.getBody().getPosition().y
+                    );
+        }
+        if (!this.towerAlive) {
+            this.isAlive=false;
+        }
+    }
+
+    /**
+     *  Called when it is hit by a water projectile and the tower it belongs to is destroyed
+     */
+    public void onDeath()
+    {
+        if(this.isAlive) {
+            this.isAlive = false;
+            this.setTarget(null);
+            this.screen.updatePlayerScore(100);
+            this.screen.destroyBody(this.alertSensor.getFixture().getBody());
+            this.screen.destroyBody(this.angrySensor.getFixture().getBody());
+            this.spriteHandler.destroySpriteAndBody(this.entityFixture);
+        }
+    }
+
+    public boolean reachedTower(){
+        if(     Math.abs(this.getLocation().x-this.tower.getBody().getPosition().x)<0.1f &&
+                Math.abs(this.getLocation().y-this.tower.getBody().getPosition().y)<0.1f){
+            return true;
+        }
+        else return false;
+    }
+
+    public void reset(){
         this.isAngry=false;
         this.isActive=false;
         this.isMoving=false;
+        this.isRunning=false;
+        this.moveLoc=null;
     }
 
     /***
@@ -346,12 +379,20 @@ public class AlienPatrol extends BoxGameEntity
      */
     public void update(float deltaTime)
     {
-        if (this.isAngry) {
+        if(!this.isAlive) this.onDeath();
+        if (this.isRunning) {
+            //don't give a shit and move as well
+            this.move();
+            if(this.reachedTower()){
+                this.reset();
+            }
+        }
+        else if (this.isAngry) {
             //don't give a shit and MOVE
             this.move();
             this.timeToBeAngry--;
             if(this.timeToBeAngry<=0){
-                this.stopBeingAngry();
+                this.reset();
             }
         }
         else if (this.isActive) {
@@ -363,7 +404,7 @@ public class AlienPatrol extends BoxGameEntity
                 this.stopMoving();
             }
         }
-        else if(!this.isAngry && !this.isActive) {
+        else {
             this.timeToMove--;
             if (timeToMove <=0) this.pickRandomLoc();
         }
