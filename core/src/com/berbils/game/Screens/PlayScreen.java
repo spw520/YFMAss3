@@ -194,7 +194,7 @@ public class PlayScreen implements Screen
 	 */
 	private void loadMap()
 		{
-		maploader = new MapLoader("CityMap/Map.tmx");
+		maploader = new MapLoader("CityMap/Map2.tmx");
 		renderer = new OrthoCachedTiledMapRenderer(maploader.map, 1 / Kroy.PPM);
 		}
 
@@ -321,7 +321,7 @@ public class PlayScreen implements Screen
 		hud.stage.draw();
 		// If change false to true, the box2D debug renderer will render box2D
 		// body outlines
-		if(true) {
+		if(false) {
 		b2dr.render(world, gameCam.combined.scl(PPM));
 		}
 	}
