@@ -48,6 +48,13 @@ public class FireStation extends BoxGameEntity
 		super.setUserData(this);
 		}
 
+	public void enterStationScreen(FireEngine fireEngine) {
+		fireEngine.reset();
+		this.screen.setFireEngSpawnPoint(this.position);
+		this.spriteHandler.destroySpriteAndBody(fireEngine.getFixture());
+		this.screen.getGame().setScreen(this.screen.getGame().selectFireEngine);
+	}
+
 	/**
 	 * The method for determining what occurs on collision with the fire
 	 * station object.The current screen shown is updated and the
@@ -59,10 +66,7 @@ public class FireStation extends BoxGameEntity
 		{
 		FireEngine fireEngine = ( (FireEngine) fixture.getUserData() );
 		if (fireEngine.leftFireStation) {
-			fireEngine.reset();
-			this.screen.setFireEngSpawnPoint(this.position);
-			this.spriteHandler.destroySpriteAndBody(fixture);
-			this.screen.getGame().setScreen(this.screen.getGame().selectFireEngine);
+			enterStationScreen(fireEngine);
 		}
 		}
 	}

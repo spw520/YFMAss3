@@ -57,8 +57,12 @@ public class InputManager {
     }
     if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
     {
-
       game.setScreen(game.pauseScreen);
+    }
+
+    if(Gdx.input.isKeyJustPressed(Input.Keys.F))
+    {
+      game.gameScreen.getFireStation().enterStationScreen(player);
     }
 
     if (Gdx.input.isTouched()) {

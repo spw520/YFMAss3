@@ -444,6 +444,10 @@ public class PlayScreen implements Screen
 							Kroy.FIRESTATION_TEX);
 		}
 
+	public FireStation getFireStation(){
+		return this.fireStation;
+	}
+
 	/**
 	 * Updates the players score by the amount passed in
 	 *

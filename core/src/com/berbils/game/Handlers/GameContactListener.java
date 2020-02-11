@@ -98,7 +98,6 @@ public class GameContactListener implements ContactListener
 			this.getProjectilesObject(fixtureAUserData, fixtureBUserData)
 				.collided(this.getProjectilesFixture(fixtureA, fixtureB));
 		}
-
 		else {
 			return;
 		}

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -26,6 +27,7 @@ public class HUD implements Disposable
 	Label scoreLabel;
 	Label FPSLabel;
 	Label ScoreLabel;
+	Label announcement;
 	private Viewport viewport;
 	private Integer health;
 	private Integer water;
@@ -33,6 +35,7 @@ public class HUD implements Disposable
 	private Integer FPS;
 	private FireEngine player;
 	private PlayScreen screen;
+	private boolean canEnterStation;
 
 	/**
 	 *Creates the viewport, labels and stage for the HUD
@@ -55,6 +58,7 @@ public class HUD implements Disposable
 		Table table = new Table();
 		table.top();
 		table.setFillParent(true); // Table is size of stage
+		announcement = null;
 		healthLabel =
 			new Label(
 				String.format("%s %03d", "Health: ", health),
@@ -70,11 +74,16 @@ public class HUD implements Disposable
 		ScoreLabel = new Label(String.format("%s %4d", "Score: ", score),
 							 new Label.LabelStyle(new BitmapFont(),
 												  Color.WHITE));
+		announcement = new Label(String.format(""),
+				new Label.LabelStyle(new BitmapFont(),
+						Color.WHITE));
 		table.add(waterLabel).padTop(10).expandX();
 		table.add(FPSLabel).padTop(10).expandX();
 		table.add(ScoreLabel).padTop(10).expandX();
 		table.add(healthLabel).padTop(10).expandX();
+		table.add(announcement).padTop(10).expandX();
 		stage.addActor(table);
+		this.canEnterStation=false;
 		}
 
 	/**
@@ -82,11 +91,21 @@ public class HUD implements Disposable
 	 */
 	public void update()
 		{
+		this.updateLabel();
 		this.updateHealth(player.currentHealth);
 		this.updateWater(player.currentWater);
 		this.updateFPS(Gdx.graphics.getFramesPerSecond());
 		this.updateScore(this.screen.getPlayerScore());
 		}
+
+	private void updateLabel(){
+		if(this.canEnterStation){
+			this.announcement.setText(String.format("Press F to enter \n fire station!"));
+		}
+		else {
+			this.announcement.setText("");
+		}
+	}
 
 	/**
 	 * Updates the health label
@@ -133,6 +152,10 @@ public class HUD implements Disposable
 		{
 		this.player = player;
 		}
+
+	public void changeEnterStation(boolean yes) {
+		this.canEnterStation=yes;
+	}
 
 	@Override
 	public void dispose()
