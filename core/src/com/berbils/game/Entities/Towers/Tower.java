@@ -298,13 +298,11 @@ public class Tower extends CircleGameEntity
 	 *  Else if the tower is not the last one alive, an explosion is created
 	 *  and the towers body, fixture and sprite destroyed.
 	 */
-	public void onDeath()
-		{
-		for (AlienPatrol patrol : patrols){
-			if (patrol!=null) patrol.killTower();
-		}
-
+	public void onDeath() {
 		if (!this.dead) {
+			for (AlienPatrol patrol : patrols){
+				if (patrol!=null) patrol.killTower();
+			}
 			this.dead=true;
 			Kroy game = this.screen.getGame();
 			this.screen.towerDestroyed();
