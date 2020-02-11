@@ -37,8 +37,10 @@ public class AlienPatrol extends BoxGameEntity
 
     /**
      * Boolean for determining whether the patrol should be destroyed
+     * The second one refers to whether all death functions have been completed already
      */
     private boolean isAlive;
+    private boolean isDead;
 
     /**
      * Boolean for determining whether the patrol is currently moving in any
@@ -180,6 +182,7 @@ public class AlienPatrol extends BoxGameEntity
         this.isActive = false;
         this.isMoving = false;
         this.isAlive = true;
+        this.isDead = false;
         this.isAngry = false;
         this.towerAlive = true;
         this.speed = 0.5f;
@@ -343,8 +346,8 @@ public class AlienPatrol extends BoxGameEntity
      */
     public void onDeath()
     {
-        if(this.isAlive) {
-            this.isAlive = false;
+        if(!this.isDead) {
+            this.isDead = true;
             this.setTarget(null);
             this.screen.updatePlayerScore(100);
             this.screen.destroyBody(this.alertSensor.getFixture().getBody());
@@ -379,37 +382,35 @@ public class AlienPatrol extends BoxGameEntity
      */
     public void update(float deltaTime)
     {
-        if(!this.isAlive) this.onDeath();
-        if (this.isRunning) {
-            //don't give a shit and move as well
-            this.move();
-            if(this.reachedTower()){
-                this.reset();
+        if (!this.isDead) {
+            if (!this.isAlive) this.onDeath();
+            else if (this.isRunning) {
+                //don't give a shit and move as well
+                this.move();
+                if (this.reachedTower()) {
+                    this.reset();
+                }
+            } else if (this.isAngry) {
+                //don't give a shit and MOVE
+                this.move();
+                this.timeToBeAngry--;
+                if (this.timeToBeAngry <= 0) {
+                    this.reset();
+                }
+            } else if (this.isActive) {
+                //freeze and be active
+            } else if (this.isMoving) {
+                this.move();
+                if (this.timeToStop <= 0) {
+                    this.stopMoving();
+                }
+            } else {
+                this.timeToMove--;
+                if (timeToMove <= 0) this.pickRandomLoc();
             }
+            this.updateSprite();
+            this.alertSensor.setLocation(this.getLocation());
+            this.angrySensor.setLocation(this.getLocation());
         }
-        else if (this.isAngry) {
-            //don't give a shit and MOVE
-            this.move();
-            this.timeToBeAngry--;
-            if(this.timeToBeAngry<=0){
-                this.reset();
-            }
-        }
-        else if (this.isActive) {
-            //freeze and be active
-        }
-        else if(this.isMoving) {
-            this.move();
-            if (this.timeToStop<=0) {
-                this.stopMoving();
-            }
-        }
-        else {
-            this.timeToMove--;
-            if (timeToMove <=0) this.pickRandomLoc();
-        }
-        this.updateSprite();
-        this.alertSensor.setLocation(this.getLocation());
-        this.angrySensor.setLocation(this.getLocation());
     }
 }
