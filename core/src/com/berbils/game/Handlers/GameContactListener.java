@@ -87,11 +87,18 @@ public class GameContactListener implements ContactListener
 			this.getFireStationObject(fixtureAUserData, fixtureBUserData)
 				.collided(this.getFireEngineFixture(fixtureA, fixtureB));
 		}
+		// patrol hitting the fire station, where it dare not come
+		else if (this.patrolContactFireStation(	fixtureAUserData,
+												fixtureBUserData)) {
+			this.getPatrolObject(fixtureAUserData,fixtureBUserData)
+					.getHit();
+		}
 		// Projectile hitting scenery
 		else if (this.projectileContactScenery(fixtureA, fixtureB)) {
 			this.getProjectilesObject(fixtureAUserData, fixtureBUserData)
 				.collided(this.getProjectilesFixture(fixtureA, fixtureB));
 		}
+
 		else {
 			return;
 		}
@@ -176,6 +183,18 @@ public class GameContactListener implements ContactListener
             return ( ( obj1 instanceof AngrySensor && obj2 instanceof FireEngine )
                     || ( obj1 instanceof FireEngine && obj2 instanceof AngrySensor ) );
         }
+
+	private boolean fireEngContactPatrol(Object obj1, Object obj2)
+		{
+			return ( ( obj1 instanceof AlienPatrol && obj2 instanceof FireEngine )
+					|| ( obj1 instanceof FireEngine && obj2 instanceof AlienPatrol ) );
+		}
+
+	private boolean patrolContactFireStation(Object obj1, Object obj2)
+		{
+			return ( ( obj1 instanceof FireStation && obj2 instanceof AlienPatrol )
+					|| ( obj1 instanceof AlienPatrol && obj2 instanceof FireStation ) );
+		}
 
 
 	/**

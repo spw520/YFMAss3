@@ -382,38 +382,35 @@ public class AlienPatrol extends BoxGameEntity
      */
     public void update(float deltaTime)
     {
-        if (this.isDead) {}
-        else if(!this.isAlive) this.onDeath();
-        else if (this.isRunning) {
-            //don't give a shit and move as well
-            this.move();
-            if(this.reachedTower()){
-                this.reset();
+        if (!this.isDead) {
+            if (!this.isAlive) this.onDeath();
+            else if (this.isRunning) {
+                //don't give a shit and move as well
+                this.move();
+                if (this.reachedTower()) {
+                    this.reset();
+                }
+            } else if (this.isAngry) {
+                //don't give a shit and MOVE
+                this.move();
+                this.timeToBeAngry--;
+                if (this.timeToBeAngry <= 0) {
+                    this.reset();
+                }
+            } else if (this.isActive) {
+                //freeze and be active
+            } else if (this.isMoving) {
+                this.move();
+                if (this.timeToStop <= 0) {
+                    this.stopMoving();
+                }
+            } else {
+                this.timeToMove--;
+                if (timeToMove <= 0) this.pickRandomLoc();
             }
+            this.updateSprite();
+            this.alertSensor.setLocation(this.getLocation());
+            this.angrySensor.setLocation(this.getLocation());
         }
-        else if (this.isAngry) {
-            //don't give a shit and MOVE
-            this.move();
-            this.timeToBeAngry--;
-            if(this.timeToBeAngry<=0){
-                this.reset();
-            }
-        }
-        else if (this.isActive) {
-            //freeze and be active
-        }
-        else if(this.isMoving) {
-            this.move();
-            if (this.timeToStop<=0) {
-                this.stopMoving();
-            }
-        }
-        else {
-            this.timeToMove--;
-            if (timeToMove <=0) this.pickRandomLoc();
-        }
-        this.updateSprite();
-        this.alertSensor.setLocation(this.getLocation());
-        this.angrySensor.setLocation(this.getLocation());
     }
 }
