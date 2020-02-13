@@ -84,8 +84,10 @@ public class GameContactListener implements ContactListener
 		// Fire engine touching the fire station
 		else if (this.fireEngineContactFireStation(fixtureAUserData,
 												   fixtureBUserData)) {
-			this.getFireStationObject(fixtureAUserData, fixtureBUserData)
-				.collided(this.getFireEngineFixture(fixtureA, fixtureB));
+			this.getFireEngineObject(fixtureAUserData, fixtureBUserData)
+				.onFireSTation=true;
+			this.getFireEngineObject(fixtureAUserData, fixtureBUserData)
+					.screen.hud.changeEnterStation(true);
 		}
 		// patrol hitting the fire station, where it dare not come
 		else if (this.patrolContactFireStation(	fixtureAUserData,
@@ -136,7 +138,7 @@ public class GameContactListener implements ContactListener
 		else if (this.fireEngineContactFireStation(fixtureAUserData,
 												   fixtureBUserData)) {
 			this.getFireEngineObject(fixtureAUserData,
-									 fixtureBUserData).leftFireStation = true;
+					fixtureBUserData).leaveFireStation();
 		}
 		else {
 			return;

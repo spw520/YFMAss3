@@ -55,7 +55,7 @@ public class PlayScreen implements Screen
 	/** The hud, displays FPS, SCORE, Fire engine current health, fire engine
 	 * current water
 	 */
-	private HUD hud;
+	public HUD hud;
 
   // Map loading objects
 	/** The MapLoader that will be used to obtain the positions of towers and
@@ -524,8 +524,9 @@ public class PlayScreen implements Screen
 	public void selectFireEngine(int index)
 		{
 		this.player = this.fireEngineArrayList.get(index);
-		this.player.leftFireStation = false;
-		this.player.spawn(this.fireEngSpawnPos);
+		this.player.leftFireStation = true;
+		this.player.spawn(new Vector2(this.fireEngSpawnPos.x,
+                                    this.fireEngSpawnPos.y-1.8f));
 		this.fireEngineSelectedIndex = index;
 		this.hud.setPlayer(this.player);
 		}

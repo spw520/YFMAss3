@@ -22,7 +22,7 @@ public abstract class Entity
 	protected Vector2 sizeDims;
 
 	/**The Screen the entity object is located and will be created */
-	protected PlayScreen screen;
+	public PlayScreen screen;
 	/**
 	 * The world attached the body would be created on and is attached to
 	 * the screen

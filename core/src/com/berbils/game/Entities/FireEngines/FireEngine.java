@@ -48,6 +48,10 @@ public class FireEngine extends BoxGameEntity
 	 */
 	public boolean leftFireStation;
 
+	/** A boolean that determines whether F can be pressed to enter the fire station.
+	 */
+	public boolean onFireSTation;
+
 	/**
 	 * The {@link Weapon} class instance assigned to the fire engine
 	 * allowing it to the @fire method and attack
@@ -146,6 +150,7 @@ public class FireEngine extends BoxGameEntity
 		this.maxHealth = maxHealth;
 		this.leftFireStation = true;
 		this.isAlive = true;
+		this.onFireSTation=true;
 		}
 
 	/**
@@ -226,6 +231,12 @@ public class FireEngine extends BoxGameEntity
 		super.setUserData(this);
 		super.createSprite();
 		}
+
+	public void leaveFireStation(){
+		this.onFireSTation = false;
+		this.leftFireStation=true;
+		this.screen.hud.changeEnterStation(false);
+	}
 
 	/**
 	 * Resets the current health and current water atributes to their max values
