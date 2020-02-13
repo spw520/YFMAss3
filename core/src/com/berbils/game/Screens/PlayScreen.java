@@ -36,7 +36,6 @@ public class PlayScreen implements Screen
 	public OrthographicCamera gameCam;
 	// Set to public temporarily, can be private once more when tower loading from map is done
 
-
 	/** the current index of the fire engine selected, this index relates to
 	 * the button to select it on the SelectFireEngineScreen */
 	public int fireEngineSelectedIndex;
@@ -365,7 +364,7 @@ public class PlayScreen implements Screen
 
     this.projectileList.add(this.standardProjectile);
     this.projectileList.add(this.slowLargeExplosiveProjectile);
-    this.projectileList.add(smallFastProjectile);
+    this.projectileList.add(this.smallFastProjectile);
     this.projectileList.add(this.waterProjectile);
     this.projectileList.add(this.largewaterProjectile);
   }
@@ -524,12 +523,17 @@ public class PlayScreen implements Screen
 	public void selectFireEngine(int index)
 		{
 		this.player = this.fireEngineArrayList.get(index);
-		this.player.leftFireStation = true;
+		this.player.onFireSTation = false;
 		this.player.spawn(new Vector2(this.fireEngSpawnPos.x,
                                     this.fireEngSpawnPos.y-1.8f));
 		this.fireEngineSelectedIndex = index;
 		this.hud.setPlayer(this.player);
 		}
+
+	public void enterMiniGame() {
+		MiniGame mg = new MiniGame(this,this.game,player);
+		this.game.setScreen(mg);
+	}
 
 	/**
 	 * Sets the fire engine spawn point

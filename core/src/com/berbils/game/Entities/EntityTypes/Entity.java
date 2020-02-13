@@ -148,13 +148,16 @@ public abstract class Entity
 	protected void createBox2DBody()
 		{
 		this.createBox2Definition();
-		this.entityBody = world.createBody(this.entityBodyDefinition);
+		this.entityBody = this.world.createBody(this.entityBodyDefinition);
 		}
-	/** Create a body using the Entities already defined body definition */
+
+	/** Create a body using the Entities already defined body definition
+	 *  The alternate version takes a specific world to spawn in, used for the minigame*/
 	public void createBodyCopy()
 		{
 		this.entityBody = this.world.createBody(this.entityBodyDefinition);
 		}
+	public void createBodyCopy(World world) {this.entityBody = world.createBody(this.entityBodyDefinition);}
 
 	/**
 	 * method for creating Box2D fixture definition
@@ -178,12 +181,10 @@ public abstract class Entity
 	/** Create a fixture using the Entities already defined fixture
 	 * definition
 	 */
-	public void createFixtureCopy()
-		{
-		this.entityFixture = this.entityBody.createFixture(this.entityFixtureDefinition);
-		}
+	public void createFixtureCopy() { this.entityFixture = this.entityBody.createFixture(this.entityFixtureDefinition); }
 
-	/**
+
+		/**
 	 * Creates a sprite attached to the entitity
 	 * Note - will not create a sprite if its texture is null
 	 */

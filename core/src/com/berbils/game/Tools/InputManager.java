@@ -17,7 +17,7 @@ public class InputManager {
 
 
   /**
-   * Gets user input from keyboard
+   * Gets user input from keyboard, works for the main PlayScreen
    *
    * @param delta
    * @param player
@@ -65,6 +65,12 @@ public class InputManager {
       game.gameScreen.getFireStation().enterStationScreen(player);
     }
 
+    //Temporary testing thing
+    if(Gdx.input.isKeyJustPressed(Input.Keys.M))
+    {
+      game.gameScreen.enterMiniGame();
+    }
+
     if (Gdx.input.isTouched()) {
       Vector3 mousePosInWorld = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0)).scl(1/ Kroy.PPM);
       mousePos.x = mousePosInWorld.x;
@@ -74,6 +80,19 @@ public class InputManager {
         player.fire(mousePos);
         // hud.updateWater(player.water);
       }
+    }
+  }
+
+  /**
+   * Gets user input from keyboard, works for the main PlayScreen
+   *
+   * @param delta
+   * @param player
+   */
+  public void handleMiniGameInput(FireEngine player, float delta, Kroy game) {
+    if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
     }
   }
 }

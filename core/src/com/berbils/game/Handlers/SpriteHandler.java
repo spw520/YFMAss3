@@ -85,7 +85,6 @@ public class SpriteHandler
 
 		this.createWorldMapSprite(mapTextureFilePath, mapSize);
 
-
 		}
 
 	/**

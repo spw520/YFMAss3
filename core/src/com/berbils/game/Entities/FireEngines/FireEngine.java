@@ -1,6 +1,7 @@
 package com.berbils.game.Entities.FireEngines;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.berbils.game.Entities.EntityTypes.BoxGameEntity;
 import com.berbils.game.Entities.ProjectileSpawners.Weapon;
 import com.berbils.game.Kroy;
@@ -234,7 +235,7 @@ public class FireEngine extends BoxGameEntity
 
 	public void leaveFireStation(){
 		this.onFireSTation = false;
-		this.leftFireStation=true;
+		this.leftFireStation = true;
 		this.screen.hud.changeEnterStation(false);
 	}
 

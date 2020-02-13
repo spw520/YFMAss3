@@ -347,8 +347,11 @@ public class GameContactListener implements ContactListener
 		}
 
 	private boolean projectileContactPatrol(Object obj1, Object obj2) {
-		return ( ( obj1 instanceof Projectiles && obj2 instanceof AlienPatrol )
-				|| ( obj1 instanceof AlienPatrol && obj2 instanceof Projectiles ) );
+		if ( ( obj1 instanceof Projectiles && obj2 instanceof AlienPatrol )
+				|| ( obj1 instanceof AlienPatrol && obj2 instanceof Projectiles ) ) {
+			return (!getPatrolObject(obj1,obj2).isRunning);
+		}
+		return false;
 	}
 
 	/**

@@ -33,7 +33,7 @@ public class AlienPatrol extends BoxGameEntity
      * Boolean for determining whether the patrol has been hit by water and
      * should be running away.
      */
-    private boolean isRunning;
+    public boolean isRunning;
 
     /**
      * Boolean for determining whether the patrol should be destroyed
@@ -357,7 +357,8 @@ public class AlienPatrol extends BoxGameEntity
     }
 
     public boolean reachedTower(){
-        if(     Math.abs(this.getLocation().x-this.tower.getBody().getPosition().x)<0.1f &&
+        if(!this.towerAlive) return false;
+        else if(Math.abs(this.getLocation().x-this.tower.getBody().getPosition().x)<0.1f &&
                 Math.abs(this.getLocation().y-this.tower.getBody().getPosition().y)<0.1f){
             return true;
         }
@@ -389,6 +390,10 @@ public class AlienPatrol extends BoxGameEntity
                 this.move();
                 if (this.reachedTower()) {
                     this.reset();
+                }
+                if (!this.towerAlive) {
+                    this.isAlive=false;
+                    this.onDeath();
                 }
             } else if (this.isAngry) {
                 //don't give a shit and MOVE

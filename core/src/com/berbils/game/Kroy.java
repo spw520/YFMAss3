@@ -51,6 +51,7 @@ public class Kroy extends Game
 	public static final String WATER_PROJECTILE_TEX = "Projectiles/waterProjectile.png";
 	public static final String FIRESTATION_TEX = "FireStation/FireStation.png";
 	public static final String FIRESTATION_MESSAGE = "stationMessage.png";
+	public static final String FALLING_GOO = "Projectiles/miniGoo.png";
 	public static int V_WIDTH;
 	public static int V_HEIGHT;
 	public static String NO_TEXTURE_TEX = "nullTexture.png";
@@ -106,6 +107,7 @@ public class Kroy extends Game
 		assets.load(GAME_PAUSED_TITLE, Texture.class);
 		assets.load(CITY_MAP_TEX, Texture.class);
 		assets.load(FIRESTATION_MESSAGE, Texture.class);
+		assets.load(FALLING_GOO, Texture.class);
 		assets.finishLoading();
 		V_HEIGHT = Gdx.graphics.getHeight();
 		V_WIDTH = Gdx.graphics.getWidth();
