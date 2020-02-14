@@ -67,6 +67,8 @@ public class FireEngine extends BoxGameEntity
 	 */
 	private boolean isAlive;
 
+	public String textureFilePath;
+
 	/**
 	 * This constructor assigns required variables and sets up the weapon class
 	 * instance for use.It only creates a fixture and body definition, no
@@ -122,6 +124,8 @@ public class FireEngine extends BoxGameEntity
 									   Kroy.MASK_FRIENDLY_PROJECTILE);
 
 		defineStats(maxWater, speed, maxHealth);
+
+		this.textureFilePath=textureFilePath;
 
 		// Set default texture
 		}
@@ -235,15 +239,6 @@ public class FireEngine extends BoxGameEntity
 		super.setUserData(this);
 		super.createSprite();
 		}
-
-	public void miniSpawn(MiniGame screen) {
-		super.setSpawnPosition(new Vector2(10,10));
-		super.createBodyCopy(screen.world);
-		this.miniScreen=screen;
-		super.createFixtureCopy();
-		super.setUserData(this);
-		super.createSprite();
-	}
 
 	public void leaveFireStation(){
 		this.onFireSTation = false;

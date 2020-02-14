@@ -19,6 +19,7 @@ import com.berbils.game.Entities.ProjectileSpawners.ProjectileTypes.Projectiles;
 import com.berbils.game.Handlers.SpriteHandler;
 import com.berbils.game.Handlers.SpriteHandlerMini;
 import com.berbils.game.Kroy;
+import com.berbils.game.MiniGameContent.FireEngineMini;
 import com.berbils.game.Scenes.HUD;
 import com.sun.prism.image.ViewPort;
 
@@ -40,7 +41,9 @@ public class MiniGame implements Screen {
      */
     private Box2DDebugRenderer b2dr;
 
-    private FireEngine player;
+    private FireEngineMini player;
+    private FireEngine ogPlayer;
+    private Vector2 ogPosition;
 
     private ArrayList<Projectiles> projectileList;
 
@@ -52,8 +55,9 @@ public class MiniGame implements Screen {
                      FireEngine player) {
         this.game = game;
         this.screen=screen;
-        this.player=player;
         this.hud=screen.hud;
+        this.ogPlayer=player;
+        this.ogPosition=player.getBody().getPosition();
 
         this.spriteHandler = new SpriteHandlerMini(this);
 
@@ -70,7 +74,8 @@ public class MiniGame implements Screen {
 
         createCamera();
 
-        player.miniSpawn(this);
+        this.player = createMiniFireEngine(ogPlayer);
+        player.miniSpawn();
     }
 
     public int l = 100;
@@ -83,6 +88,10 @@ public class MiniGame implements Screen {
 
     public void updatePlayerScore(int delta){
         this.screen.updatePlayerScore(delta);
+    }
+
+    public FireEngineMini createMiniFireEngine(FireEngine engine) {
+        return new FireEngineMini(this, engine.getSizeDims(), engine.speed, engine.currentHealth,engine.textureFilePath);
     }
 
     @Override
@@ -111,7 +120,6 @@ public class MiniGame implements Screen {
     }
 
     private void endGame(){
-        this.player.spawn(new Vector2(screen.fireEngSpawnPos));
         this.game.setScreen(screen);
     }
 

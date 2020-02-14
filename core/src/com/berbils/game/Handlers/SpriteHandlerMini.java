@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.berbils.game.Entities.EntityTypes.Entity;
 import com.berbils.game.Kroy;
+import com.berbils.game.MiniGameContent.FireEngineMini;
 import com.berbils.game.Screens.MiniGame;
 import com.berbils.game.Screens.PlayScreen;
 
@@ -98,15 +99,9 @@ public class SpriteHandlerMini
         Body fixtureBody = associatedFixture.getBody();
         Sprite newSprite = new Sprite(spriteTexture);
         Object fixBodyUserData = fixtureBody.getUserData();
-        if (fixBodyUserData instanceof Entity) {
-            this.fixtureSpriteLayers.get(spriteLayer).put(associatedFixture,
-                    newSprite);
-            this.updateSprite(associatedFixture, newSprite);
-        }
-        else {
-            throw new IllegalArgumentException(
-                    "Sprite User Data not an Entity Object");
-        }
+        this.fixtureSpriteLayers.get(spriteLayer).put(associatedFixture,
+                newSprite);
+        this.updateSprite(associatedFixture, newSprite);
         return newSprite;
     }
 
@@ -124,9 +119,9 @@ public class SpriteHandlerMini
                 currentSprite);
         this.updateSpritePos(currentFixture.getBody().getPosition(),
                 currentSprite);
-        if (currentFixture.getUserData() instanceof Entity) {
+        if (currentFixture.getUserData() instanceof FireEngineMini) {
             Vector2 size =
-                    ( (Entity) currentFixture.getUserData() ).getSizeDims();
+                    ( (FireEngineMini) currentFixture.getUserData() ).getSizeDims();
             this.updateSpriteSizes(size, currentSprite);
         }
         else {
@@ -216,6 +211,8 @@ public class SpriteHandlerMini
             for (Map.Entry<Fixture, Sprite> entry : spriteLayer.entrySet()) {
                 Sprite currentSprite = entry.getValue();
                 this.updateSprite(entry.getKey(), currentSprite);
+                System.out.println(currentSprite);
+                System.out.println(spriteLayer);
                 currentSprite.draw(batch);
             }
         }

@@ -127,19 +127,30 @@ public class FireEngineMini
     {
         this.screen=screen;
         this.sizeDims=dimensions;
+        this.position = new Vector2(10,10);
         this.isStatic=false;
-        this.angDamp=30;
-        this.linDamp=30;
+        this.angDamp=10;
+        this.linDamp=10;
         this.spriteHandler=this.screen.getSpriteHandler();
         this.currentHealth=health;
-        this.world = screen.world;
+        this.world = screen.getWorld();
+        this.spriteLayer=2;
+
+        this.defineShape();
+        createFixtureDefinition();
+        createBox2Definition();
 
         setFixtureCategory(Kroy.CAT_FRIENDLY, Kroy.MASK_FRIENDLY);
-        setBodyDefAngularDampening(10);
-        setBodyDefLinearDampening(10);
 
-        // Set default texture
-    }
+
+
+        if(textureFilePath == null)
+        {
+            this.entityTexture = null;
+        }
+        else {
+            this.entityTexture = Kroy.assets.get(textureFilePath, Texture.class);
+        }    }
 
     /**
      * Method for reducing the current health of the fire engine instance and
@@ -189,7 +200,7 @@ public class FireEngineMini
         }
     }
 
-    public void miniSpawn(MiniGame screen) {
+    public void miniSpawn() {
         setSpawnPosition(new Vector2(10,10));
         createBodyCopy();
         createFixtureCopy();

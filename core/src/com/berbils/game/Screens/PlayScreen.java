@@ -530,8 +530,6 @@ public class PlayScreen implements Screen
 
 	public void enterMiniGame() {
 		MiniGame mg = new MiniGame(this,this.game,player);
-		this.setFireEngSpawnPoint(player.getBody().getPosition());
-		this.spriteHandler.destroySpriteAndBody(player.getFixture());
 		this.game.setScreen(mg);
 	}
 
