@@ -1,5 +1,6 @@
 package com.berbils.game.Handlers;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.berbils.game.Entities.EntityTypes.Entity;
 import com.berbils.game.Kroy;
+import com.berbils.game.Screens.MiniGame;
 import com.berbils.game.Screens.PlayScreen;
 
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ import java.util.Map;
 public class SpriteHandler
 	{
 	/** The screen the sprites will be created in/on */
-	private PlayScreen screen;
+	private Screen screen;
 
 	/** The number of sprite layers for sprites on their own and fixture
 	 * associated sprites. The higher the number the more specific you can
@@ -72,12 +74,13 @@ public class SpriteHandler
 	 *
 	 * @param mapSize				The size of the world in meters
 	 */
-	public SpriteHandler(PlayScreen screen, String mapTextureFilePath, Vector2 mapSize)
+	public SpriteHandler(Screen screen, String mapTextureFilePath, Vector2 mapSize)
 		{
 		this.fixtureSpriteLayers = new ArrayList<HashMap<Fixture, Sprite>>();
 		this.spriteLayers = new ArrayList<ArrayList<Sprite>>();
 		this.noOfSpriteLayers = 4;
-		this.screen = screen;
+		if (screen instanceof PlayScreen) this.screen = (PlayScreen)screen;
+		if (screen instanceof MiniGame) this.screen = (MiniGame)screen;
 		for (int i = 0; i < noOfSpriteLayers; i++) {
 			this.fixtureSpriteLayers.add(new HashMap<Fixture, Sprite>());
 			this.spriteLayers.add(new ArrayList<Sprite>());
@@ -264,8 +267,7 @@ public class SpriteHandler
 			if (layer.containsKey(spriteFixture)) {
 				layer.get(spriteFixture).setSize(0, 0);
 				layer.remove(spriteFixture);
-				this.screen.destroyBody(spriteFixture.getBody());
-			}
+				((PlayScreen)this.screen).destroyBody(spriteFixture.getBody()); }
 		}
 		}
 

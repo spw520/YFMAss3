@@ -136,7 +136,7 @@ public class PlayScreen implements Screen
 	private SpriteHandler spriteHandler;
 
 	/** Fire engine spawn position */
-	private Vector2 fireEngSpawnPos;
+	public Vector2 fireEngSpawnPos;
 
 	/** The players score */
 	private int playerScore;
@@ -152,17 +152,15 @@ public class PlayScreen implements Screen
 	public PlayScreen(Kroy game)
 		{
 		this.game = game;
-
 		createCamera();
 		loadMap();
 		createBox2DWorld();
 		createGameEntities();
-
 		this.inputManager = new InputManager(this.gameCam);
 		this.fireEngSpawnPos = maploader.getEngineSpawn();
 		this.fireEnginesAlive = this.fireEngineArrayList.size();
 		this.towersAlive = this.towers.size;
-		hud = new HUD(game.batch, player, this);
+		this.hud = new HUD(game.batch, player, this);
 		this.playerScore = 0;
 		}
 
@@ -532,6 +530,8 @@ public class PlayScreen implements Screen
 
 	public void enterMiniGame() {
 		MiniGame mg = new MiniGame(this,this.game,player);
+		this.setFireEngSpawnPoint(player.getBody().getPosition());
+		this.spriteHandler.destroySpriteAndBody(player.getFixture());
 		this.game.setScreen(mg);
 	}
 

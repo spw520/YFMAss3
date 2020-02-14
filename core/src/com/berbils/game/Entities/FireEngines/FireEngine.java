@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.berbils.game.Entities.EntityTypes.BoxGameEntity;
 import com.berbils.game.Entities.ProjectileSpawners.Weapon;
 import com.berbils.game.Kroy;
+import com.berbils.game.Screens.MiniGame;
 import com.berbils.game.Screens.PlayScreen;
 
 /**
@@ -178,7 +179,7 @@ public class FireEngine extends BoxGameEntity
 		this.currentHealth -= damageTaken;
 		this.screen.updatePlayerScore(-damageTaken);
 		if (this.currentHealth <= 0) {
-			this.onDeath();
+		this.onDeath();
 		}
 		}
 
@@ -196,22 +197,24 @@ public class FireEngine extends BoxGameEntity
 			* The button for selecting that fire engine instance should also
 			* be removed
 			* */
-			Kroy game = this.screen.getGame();
-			this.screen.fireEngineDestroyed();
-			game.selectFireEngine.removeButton(this.screen.fireEngineSelectedIndex);
+			if (screen instanceof PlayScreen) {
+				PlayScreen scr = (PlayScreen) screen;
+				Kroy game = scr.getGame();
+				scr.fireEngineDestroyed();
+				game.selectFireEngine.removeButton(scr.fireEngineSelectedIndex);
 
-			if (this.screen.allFireEnginesDestroyed()) {
-				this.screen.getGame().setScreen(game.gameOverScreen);
-				game.gameOverScreen.setTimer(2, game.mainMenu);
-				game.createAllScreens();
-			}
-			else {
-				game.fireEngineDestroyedScreen.setTimer(2,
-														game.selectFireEngine);
-				this.spriteHandler.destroySpriteAndBody(this.entityFixture);
-				this.screen.updatePlayerScore(-200);
-				this.screen.getGame().setScreen(game.fireEngineDestroyedScreen);
+				if (scr.allFireEnginesDestroyed()) {
+					scr.getGame().setScreen(game.gameOverScreen);
+					game.gameOverScreen.setTimer(2, game.mainMenu);
+					game.createAllScreens();
+				} else {
+					game.fireEngineDestroyedScreen.setTimer(2,
+							game.selectFireEngine);
+					this.spriteHandler.destroySpriteAndBody(this.entityFixture);
+					scr.updatePlayerScore(-200);
+					scr.getGame().setScreen(game.fireEngineDestroyedScreen);
 
+				}
 			}
 		}
 		}
@@ -233,10 +236,20 @@ public class FireEngine extends BoxGameEntity
 		super.createSprite();
 		}
 
+	public void miniSpawn(MiniGame screen) {
+		super.setSpawnPosition(new Vector2(10,10));
+		super.createBodyCopy(screen.world);
+		this.miniScreen=screen;
+		super.createFixtureCopy();
+		super.setUserData(this);
+		super.createSprite();
+	}
+
 	public void leaveFireStation(){
 		this.onFireSTation = false;
 		this.leftFireStation = true;
 		this.screen.hud.changeEnterStation(false);
+
 	}
 
 	/**

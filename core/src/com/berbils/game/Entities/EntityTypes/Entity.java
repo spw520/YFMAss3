@@ -1,12 +1,14 @@
 package com.berbils.game.Entities.EntityTypes;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.berbils.game.Handlers.SpriteHandler;
 import com.berbils.game.Kroy;
+import com.berbils.game.Screens.MiniGame;
 import com.berbils.game.Screens.PlayScreen;
 
 /***
@@ -16,7 +18,7 @@ import com.berbils.game.Screens.PlayScreen;
 public abstract class Entity
 	{
 	/**The position the variable is at in meters*/
-	protected Vector2 position;
+	public Vector2 position;
 
 	/**The size dimensions of the entity in meters */
 	protected Vector2 sizeDims;
@@ -106,10 +108,12 @@ public abstract class Entity
 		this.position = pos;
 		this.sizeDims = sizeDims;
 		this.world = screen.getWorld();
+
 		this.isStatic = isStatic;
 		this.angDamp = angDamp;
 		this.linDamp = linDamp;
 		this.spriteHandler = this.screen.getSpriteHandler();
+
 		this.spriteLayer = spriteLayer;
 
 		// Null tells the entity a sprite doesn't need to be created
