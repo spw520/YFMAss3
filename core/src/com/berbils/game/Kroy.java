@@ -62,7 +62,7 @@ public class Kroy extends Game
 	public static String FIRE_ENGINE_DESTROYED_TITLE = "ScreenTitles/FireEngineDestroyed.png";
 	public static String YOUVE_WON_TITLE = "ScreenTitles/YouveWon.png";
 	public static String GAME_PAUSED_TITLE = "ScreenTitles/GamePaused.png";
-	public static String CITY_MAP_TEX = "CityMap/RealCityMap.png";
+	public static String CITY_MAP_TEX = "CityMap/MapFinal.png";
 	public static AssetManager assets;
 	public SpriteBatch batch;
 	public PlayScreen gameScreen;

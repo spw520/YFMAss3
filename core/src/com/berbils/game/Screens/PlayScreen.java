@@ -191,8 +191,8 @@ public class PlayScreen implements Screen
 	 */
 	private void loadMap()
 		{
-		maploader = new MapLoader("CityMap/Map2.tmx");
-		renderer = new OrthoCachedTiledMapRenderer(maploader.map, 1 / Kroy.PPM);
+		maploader = new MapLoader("CityMap/MapFinal.tmx");
+		renderer = new OrthoCachedTiledMapRenderer(maploader.map, 1 / Kroy.PPM, 4000);
 		}
 
 	/**
