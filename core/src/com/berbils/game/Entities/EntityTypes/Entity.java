@@ -205,16 +205,16 @@ public abstract class Entity
 		/**
 		 * Creates a sprite attached to the entitity
 		 * Note - will not create a sprite if its texture is null
-
-		public void createSprite(TextureFilePath )
+		*/
+		public void createSprite(String textureFilePath)
 		{
+			this.entityTexture = Kroy.assets.get(textureFilePath, Texture.class);
 			if (this.entityTexture != null) {
 				this.entitySprite = this.spriteHandler.createNewSprite(this.entityFixture,
 						this.entityTexture,
 						this.spriteLayer);
 			}
 		}
-		 */
 
 
 
@@ -361,4 +361,5 @@ public abstract class Entity
 		this.entityFixture.setUserData(userData);
 		this.entityBody.setUserData(userData);
 		}
+
 	}

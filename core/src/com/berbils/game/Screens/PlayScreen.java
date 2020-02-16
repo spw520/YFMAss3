@@ -272,7 +272,7 @@ public class PlayScreen implements Screen
 		public void run(){
   			fireStation.StationDestroyed();
 		}
-	}, 8*60, 0);
+	}, 15, 0);
   }
 
 

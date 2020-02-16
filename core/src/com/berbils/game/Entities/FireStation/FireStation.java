@@ -68,7 +68,7 @@ public class FireStation extends BoxGameEntity
 	 */
 	public void StationDestroyed(){
 		//change to new texture
-		this.screen.createFireStation();
+		super.createSprite(Kroy.DESTROYED_FIRESTATION_TEX);
 		this.StationRepair = false;
 	}
 
