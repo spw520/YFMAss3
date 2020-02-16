@@ -50,6 +50,8 @@ public class Kroy extends Game
 	public static final String OBSTACLE_TEX = "Obstacle.png";
 	public static final String WATER_PROJECTILE_TEX = "Projectiles/waterProjectile.png";
 	public static final String FIRESTATION_TEX = "FireStation/FireStation.png";
+	//Edit @author Alex Dawson new sprite for destroyed fire station
+	public static final String DESTROYED_FIRESTATION_TEX = "FireStation/FireStationDestroyed.png";
 	public static final String FIRESTATION_MESSAGE = "stationMessage.png";
 	public static final String FALLING_GOO = "Projectiles/miniGoo.png";
 	public static int V_WIDTH;
@@ -97,6 +99,8 @@ public class Kroy extends Game
 		assets.load(Kroy.OBSTACLE_TEX, Texture.class);
 		assets.load(Kroy.WATER_PROJECTILE_TEX, Texture.class);
 		assets.load(Kroy.FIRESTATION_TEX, Texture.class);
+		//Edit @author Alex Dawson new texture is loaded
+		assets.load(Kroy.DESTROYED_FIRESTATION_TEX, Texture.class);
 		assets.load(Kroy.NO_TEXTURE_TEX, Texture.class);
 		assets.load(Kroy.HEALTH_BAR_TEX, Texture.class);
 		assets.load(Kroy.KROY_TITLE_TITLE, Texture.class);

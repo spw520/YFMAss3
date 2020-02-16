@@ -201,6 +201,23 @@ public abstract class Entity
 		}
 		}
 
+
+		/**
+		 * Creates a sprite attached to the entitity
+		 * Note - will not create a sprite if its texture is null
+
+		public void createSprite(TextureFilePath )
+		{
+			if (this.entityTexture != null) {
+				this.entitySprite = this.spriteHandler.createNewSprite(this.entityFixture,
+						this.entityTexture,
+						this.spriteLayer);
+			}
+		}
+		 */
+
+
+
 	/** All entity subclasses need a method for creating atleast a Box2D
 	 * body and fixture definition
 	 */

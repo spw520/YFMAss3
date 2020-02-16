@@ -313,6 +313,8 @@ public class Tower extends CircleGameEntity
 			}
 			else {
 				this.explosionOnDeath.explode(this.position);
+				//Edit @author Alex Dawson added the next line to start station destroyed timer
+				this.screen.StationDestroyTimer();
 				this.isAlive = false;
 				this.setTarget(null);
 				this.screen.updatePlayerScore(1000);

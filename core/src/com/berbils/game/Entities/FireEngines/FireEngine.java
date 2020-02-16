@@ -247,6 +247,7 @@ public class FireEngine extends BoxGameEntity
 
 	}
 
+
 	/**
 	 * Resets the current health and current water atributes to their max values
 	 */

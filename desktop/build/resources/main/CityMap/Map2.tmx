@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="45" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="73">
+<map version="1.2" tiledversion="1.3.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="45" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="75">
  <tileset firstgid="1" source="CityMap2.tsx"/>
  <layer id="2" name="Measures" width="45" height="18">
   <data encoding="csv">
@@ -55,6 +55,12 @@
  </objectgroup>
  <objectgroup id="4" name="spawns">
   <object id="46" name="engineSpawn" x="286" y="289">
+   <point/>
+  </object>
+  <object id="73" name="engineSpawn" x="286" y="289">
+   <point/>
+  </object>
+  <object id="74" name="engineSpawn" x="286" y="289">
    <point/>
   </object>
  </objectgroup>

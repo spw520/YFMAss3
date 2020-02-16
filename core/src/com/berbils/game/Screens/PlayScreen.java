@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.berbils.game.Entities.AlienPatrols.AlienPatrol;
@@ -192,6 +194,9 @@ public class PlayScreen implements Screen
 	private void loadMap()
 		{
 		maploader = new MapLoader("CityMap/MapFinal.tmx");
+		/**Edit @author Alex Dawson on this next line i have added in the number 4000
+		 which increases the cache size in order to fit the new map
+		 */
 		renderer = new OrthoCachedTiledMapRenderer(maploader.map, 1 / Kroy.PPM, 4000);
 		}
 
@@ -258,7 +263,20 @@ public class PlayScreen implements Screen
     gameCam.update();
   }
 
-  /**
+  /** NEW method @author Alex Dawson
+   * Creates a timer to stop the station repairing the engines after 8 minutes
+   */
+  public void StationDestroyTimer(){
+  	Timer.schedule(new Task(){
+  		@Override
+		public void run(){
+  			fireStation.StationDestroyed();
+		}
+	}, 8*60, 0);
+  }
+
+
+		/**
    * Updates the Play Screen every tick
    * Steps the world, destroys all Box2D bodys that are queued for removal,
    * also updates all towers, projectiles, fixture-associated sprites and the
@@ -431,14 +449,14 @@ public class PlayScreen implements Screen
 	/**
 	 * Creates the fire station object in the world
 	 */
-	private void createFireStation()
-		{
-		this.fireStation =
-			new FireStation(this,
+	public void createFireStation() {
+			this.fireStation =
+					new FireStation(this,
 							maploader.getEngineSpawn(),
 							new Vector2(4, 2),
 							Kroy.FIRESTATION_TEX);
-		}
+
+	}
 
 	public FireStation getFireStation(){
 		return this.fireStation;

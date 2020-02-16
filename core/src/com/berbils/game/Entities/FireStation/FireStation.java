@@ -13,7 +13,9 @@ import com.berbils.game.Screens.PlayScreen;
  */
 public class FireStation extends BoxGameEntity
 	{
-	/**
+		private boolean StationRepair = true;
+
+		/**
 	 * Creates a Box2D body, fixture and then an attached sprite using the
 	 * passed in arguments with the appropriate properties for this type of
 	 * game object
@@ -50,11 +52,24 @@ public class FireStation extends BoxGameEntity
 
 	public void enterStationScreen(FireEngine fireEngine) {
 		if(fireEngine.onFireSTation) {
-			fireEngine.reset();
+			System.out.println(StationRepair);
+			if (StationRepair == true){
+				fireEngine.reset();
+			}
 			this.screen.setFireEngSpawnPoint(this.position);
 			this.spriteHandler.destroySpriteAndBody(fireEngine.getFixture());
 			this.screen.getGame().setScreen(this.screen.getGame().selectFireEngine);
 		}
+	}
+
+	/** NEW method @author Alex Dawson
+	 * Stop repairing the firetrucks when they enter the station and update the texture
+	 * to the destroyed station
+	 */
+	public void StationDestroyed(){
+		//change to new texture
+		this.screen.createFireStation();
+		this.StationRepair = false;
 	}
 
 	/**
