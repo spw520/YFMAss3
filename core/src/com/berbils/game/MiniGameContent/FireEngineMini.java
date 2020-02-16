@@ -97,6 +97,8 @@ public class FireEngineMini
      */
     private boolean isAlive;
 
+    public String textureFilePath;
+
     /**
      * This constructor assigns required variables and sets up the weapon class
      * instance for use.It only creates a fixture and body definition, no
@@ -127,7 +129,7 @@ public class FireEngineMini
     {
         this.screen=screen;
         this.sizeDims=dimensions;
-        this.position = new Vector2(10,10);
+        this.position = new Vector2(0,0);
         this.isStatic=false;
         this.angDamp=10;
         this.linDamp=10;
@@ -135,14 +137,14 @@ public class FireEngineMini
         this.currentHealth=health;
         this.world = screen.getWorld();
         this.spriteLayer=2;
+        this.speed=speed;
+
+        this.textureFilePath=textureFilePath;
 
         this.defineShape();
         createFixtureDefinition();
         createBox2Definition();
-
         setFixtureCategory(Kroy.CAT_FRIENDLY, Kroy.MASK_FRIENDLY);
-
-
 
         if(textureFilePath == null)
         {
@@ -162,61 +164,13 @@ public class FireEngineMini
     {
         this.currentHealth -= damageTaken;
         this.screen.updatePlayerScore(-damageTaken);
-        if (this.currentHealth <= 0) {
-            this.onDeath();
-        }
+        this.screen.damageRealTruck(damageTaken);
     }
-
-    /**
-     * Method called to represent fire engine death, updates scores, the
-     * current screen shown and what state the game will be in after the
-     * screens shown.
-     */
-    private void onDeath()
-    {
-        if (this.isAlive) { //
-            this.isAlive = false;
-            /* Regardless of rest of the game the screen should acknowledge
-             * fire engine destruction and display fire-engine-destroyed screen
-             * The button for selecting that fire engine instance should also
-             * be removed
-             * */
-            PlayScreen scr = screen.screen;
-            Kroy game = scr.getGame();
-            scr.fireEngineDestroyed();
-            game.selectFireEngine.removeButton(scr.fireEngineSelectedIndex);
-
-            if (scr.allFireEnginesDestroyed()) {
-                scr.getGame().setScreen(game.gameOverScreen);
-                game.gameOverScreen.setTimer(2, game.mainMenu);
-                game.createAllScreens();
-            } else {
-                game.fireEngineDestroyedScreen.setTimer(2,
-                        game.selectFireEngine);
-                this.spriteHandler.destroySpriteAndBody(this.entityFixture);
-                scr.updatePlayerScore(-200);
-                scr.getGame().setScreen(game.fireEngineDestroyedScreen);
-            }
-        }
-    }
-
     public void miniSpawn() {
-        setSpawnPosition(new Vector2(10,10));
+        //because the actual size of the minigame window is 10x7,5
+        setSpawnPosition(new Vector2(5,3.75f));
         createBodyCopy();
         createFixtureCopy();
-        setUserData(this);
-        createSprite();
-    }
-
-    /**
-     * Creates a box shape, body, fixture and sprite
-     * according to already defined parameters within Entity
-     */
-    protected void defineBox2DEntity()
-    {
-        this.defineShape();
-        createBox2DBody();
-        createFixture();
         setUserData(this);
         createSprite();
     }

@@ -8,12 +8,48 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.berbils.game.Entities.FireEngines.FireEngine;
 import com.berbils.game.Kroy;
+import com.berbils.game.MiniGameContent.FireEngineMini;
 
 public class InputManager {
   private Vector2 mousePos = new Vector2();
   private OrthographicCamera camera;
 
   public InputManager(OrthographicCamera cam){this.camera = cam;}
+
+  public void handleMiniPlayerInput(FireEngineMini player, float delta, Kroy game) {
+    int torque = 0;
+
+    if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+      player
+              .getBody()
+              .applyForce(
+                      new Vector2(
+                              player.speed * MathUtils.cos(player.getBody().getAngle()),
+                              player.speed * MathUtils.sin(player.getBody().getAngle())),
+                      player.getBody().getWorldCenter(),
+                      true);
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+      player
+              .getBody()
+              .applyForce(
+                      new Vector2(
+                              -player.speed * MathUtils.cos(player.getBody().getAngle()),
+                              -player.speed * MathUtils.sin(player.getBody().getAngle())),
+                      player.getBody().getWorldCenter(),
+                      true);
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+      torque -= 3;
+      player.getBody().setAngularVelocity(torque);
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+      torque += 3;
+      player.getBody().setAngularVelocity(torque);
+    }
+  }
 
 
   /**
@@ -65,12 +101,6 @@ public class InputManager {
       game.gameScreen.getFireStation().enterStationScreen(player);
     }
 
-    //Temporary testing thing
-    if(Gdx.input.isKeyJustPressed(Input.Keys.M))
-    {
-      game.gameScreen.enterMiniGame();
-    }
-
     if (Gdx.input.isTouched()) {
       Vector3 mousePosInWorld = this.camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0)).scl(1/ Kroy.PPM);
       mousePos.x = mousePosInWorld.x;
@@ -80,19 +110,6 @@ public class InputManager {
         player.fire(mousePos);
         // hud.updateWater(player.water);
       }
-    }
-  }
-
-  /**
-   * Gets user input from keyboard, works for the main PlayScreen
-   *
-   * @param delta
-   * @param player
-   */
-  public void handleMiniGameInput(FireEngine player, float delta, Kroy game) {
-    if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-    }
-    if (Gdx.input.isKeyPressed(Input.Keys.A)) {
     }
   }
 }

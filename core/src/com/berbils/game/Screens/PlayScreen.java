@@ -307,7 +307,6 @@ public class PlayScreen implements Screen
 		renderer.render();
 
 		// Render HUD
-		game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 		game.batch.setProjectionMatrix(gameCam.combined);
 
 		// Draw Sprites
@@ -455,6 +454,8 @@ public class PlayScreen implements Screen
 			this.playerScore += scoreChange;
 		}
 
+	public InputManager getInputManager(){return inputManager;}
+
 	/**
 	 *
 	 * Getter for the players score
@@ -529,7 +530,7 @@ public class PlayScreen implements Screen
 		}
 
 	public void enterMiniGame() {
-		MiniGame mg = new MiniGame(this,this.game,player);
+		MiniGame mg = new MiniGame(this,this.game,player,4);
 		this.game.setScreen(mg);
 	}
 

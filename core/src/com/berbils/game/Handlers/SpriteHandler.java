@@ -39,7 +39,7 @@ import java.util.Map;
 public class SpriteHandler
 	{
 	/** The screen the sprites will be created in/on */
-	private Screen screen;
+	private PlayScreen screen;
 
 	/** The number of sprite layers for sprites on their own and fixture
 	 * associated sprites. The higher the number the more specific you can
@@ -74,13 +74,12 @@ public class SpriteHandler
 	 *
 	 * @param mapSize				The size of the world in meters
 	 */
-	public SpriteHandler(Screen screen, String mapTextureFilePath, Vector2 mapSize)
+	public SpriteHandler(PlayScreen screen, String mapTextureFilePath, Vector2 mapSize)
 		{
 		this.fixtureSpriteLayers = new ArrayList<HashMap<Fixture, Sprite>>();
 		this.spriteLayers = new ArrayList<ArrayList<Sprite>>();
 		this.noOfSpriteLayers = 4;
-		if (screen instanceof PlayScreen) this.screen = (PlayScreen)screen;
-		if (screen instanceof MiniGame) this.screen = (MiniGame)screen;
+		this.screen = screen;
 		for (int i = 0; i < noOfSpriteLayers; i++) {
 			this.fixtureSpriteLayers.add(new HashMap<Fixture, Sprite>());
 			this.spriteLayers.add(new ArrayList<Sprite>());

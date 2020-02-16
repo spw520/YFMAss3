@@ -9,6 +9,8 @@ import com.berbils.game.Entities.FireStation.FireStation;
 import com.berbils.game.Entities.ProjectileSpawners.ProjectileTypes.Projectiles;
 import com.berbils.game.Entities.Towers.Tower;
 import com.berbils.game.Kroy;
+import com.berbils.game.MiniGameContent.FireEngineMini;
+import com.berbils.game.MiniGameContent.GooProjectileMini;
 import com.berbils.game.Screens.PlayScreen;
 
 public class GameContactListener implements ContactListener
@@ -95,11 +97,27 @@ public class GameContactListener implements ContactListener
 			this.getPatrolObject(fixtureAUserData,fixtureBUserData)
 					.getHit();
 		}
+		//truck touched by patrol
+		else if (this.fireEngContactPatrol(fixtureAUserData,fixtureBUserData)){
+			if(!this.getPatrolObject(fixtureAUserData,fixtureBUserData).isRunning) {
+				this.getFireEngineObject(fixtureAUserData, fixtureBUserData).screen.enterMiniGame();
+			}
+			this.getPatrolObject(fixtureAUserData,fixtureBUserData)
+					.getHit();
+		}
+		//minigame: truck hit by goo ball
+		else if (this.miniTruckContactMiniBullet(fixtureAUserData,fixtureBUserData)) {
+			this.getMiniFireEngineObject(fixtureAUserData,fixtureBUserData)
+					.takeDamage(10);
+			this.getProjectilesMiniObject(fixtureAUserData,fixtureBUserData)
+					.collided();
+		}
 		// Projectile hitting scenery
 		else if (this.projectileContactScenery(fixtureA, fixtureB)) {
 			this.getProjectilesObject(fixtureAUserData, fixtureBUserData)
 				.collided(this.getProjectilesFixture(fixtureA, fixtureB));
 		}
+
 		else {
 			return;
 		}
@@ -197,6 +215,12 @@ public class GameContactListener implements ContactListener
 					|| ( obj1 instanceof AlienPatrol && obj2 instanceof FireStation ) );
 		}
 
+	private boolean miniTruckContactMiniBullet(Object obj1, Object obj2)
+		{
+			return ( ( obj1 instanceof FireEngineMini && obj2 instanceof GooProjectileMini)
+					|| ( obj1 instanceof GooProjectileMini && obj2 instanceof FireEngineMini ) );
+		}
+
 
 	/**
 	 * Gets the @{@link Tower} object out of the two objects collided
@@ -266,6 +290,29 @@ public class GameContactListener implements ContactListener
 		}
 		}
 
+
+	/**
+	 * Gets the {@link FireEngineMini} object out of the two objects collided
+	 *
+	 * @param obj1 one of the objects in the collision
+	 * @param obj2 one of the objects in the collision
+	 * @return Returns which of the objects are a {@link FireEngineMini}, the first object
+	 * 		   if they are both {@link FireEngineMini}s
+	 */
+	private FireEngineMini getMiniFireEngineObject(Object obj1, Object obj2)
+		{
+			if (obj1 instanceof FireEngineMini) {
+				return (FireEngineMini) obj1;
+			}
+			else if (obj2 instanceof FireEngineMini) {
+				return (FireEngineMini) obj2;
+			}
+			else {
+				throw new IllegalArgumentException(
+						"Neither arguments are fire engine minis");
+			}
+		}
+
 	/**
 	 *  A Method to check if the two objects colliding are a projectile and a
 	 * 	fire engine
@@ -303,6 +350,29 @@ public class GameContactListener implements ContactListener
 			throw new IllegalArgumentException(
 				"Neither arguments are projectiles");
 		}
+		}
+
+
+	/**
+	 * Gets the mini goo projectile object out of the two objects collided
+	 *
+	 * @param obj1 one of the objects in the collision
+	 * @param obj2 one of the objects in the collision
+	 * @return Returns which of the objects are a Projectile, the first object
+	 * 		   if they are both Projectiles
+	 */
+	private GooProjectileMini getProjectilesMiniObject(Object obj1, Object obj2)
+		{
+			if (obj1 instanceof GooProjectileMini) {
+				return (GooProjectileMini) obj1;
+			}
+			else if (obj2 instanceof GooProjectileMini) {
+				return (GooProjectileMini) obj2;
+			}
+			else {
+				throw new IllegalArgumentException(
+						"Neither arguments are goo projectile minis");
+			}
 		}
 
 

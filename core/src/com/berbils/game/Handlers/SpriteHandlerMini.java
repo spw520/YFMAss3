@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.berbils.game.Entities.EntityTypes.Entity;
 import com.berbils.game.Kroy;
 import com.berbils.game.MiniGameContent.FireEngineMini;
+import com.berbils.game.MiniGameContent.GooProjectileMini;
 import com.berbils.game.Screens.MiniGame;
 import com.berbils.game.Screens.PlayScreen;
 
@@ -124,6 +125,11 @@ public class SpriteHandlerMini
                     ( (FireEngineMini) currentFixture.getUserData() ).getSizeDims();
             this.updateSpriteSizes(size, currentSprite);
         }
+        else if (currentFixture.getUserData() instanceof GooProjectileMini) {
+            Vector2 size =
+                    ( (GooProjectileMini) currentFixture.getUserData() ).getSizeDims();
+            this.updateSpriteSizes(size, currentSprite);
+        }
         else {
             throw new IllegalArgumentException(
                     "Sprites user data is not an Entity object");
@@ -211,8 +217,6 @@ public class SpriteHandlerMini
             for (Map.Entry<Fixture, Sprite> entry : spriteLayer.entrySet()) {
                 Sprite currentSprite = entry.getValue();
                 this.updateSprite(entry.getKey(), currentSprite);
-                System.out.println(currentSprite);
-                System.out.println(spriteLayer);
                 currentSprite.draw(batch);
             }
         }

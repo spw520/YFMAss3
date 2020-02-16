@@ -8,10 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.berbils.game.Entities.FireEngines.FireEngine;
@@ -20,15 +17,20 @@ import com.berbils.game.Handlers.SpriteHandler;
 import com.berbils.game.Handlers.SpriteHandlerMini;
 import com.berbils.game.Kroy;
 import com.berbils.game.MiniGameContent.FireEngineMini;
+import com.berbils.game.MiniGameContent.GooProjectileMini;
 import com.berbils.game.Scenes.HUD;
+import com.berbils.game.Tools.InputManager;
 import com.sun.prism.image.ViewPort;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ConcurrentSkipListSet;
+
+import static com.berbils.game.Kroy.PPM;
 
 public class MiniGame implements Screen {
 
-    private ExtendViewport gamePort;
+    private FitViewport gamePort;
     public OrthographicCamera gameCam;
     public HUD hud;
     public World world;
@@ -45,23 +47,26 @@ public class MiniGame implements Screen {
     private FireEngine ogPlayer;
     private Vector2 ogPosition;
 
-    private ArrayList<Projectiles> projectileList;
-
     public PlayScreen screen;
-    private ArrayList<Body> toBeDeleted;
+    private ArrayList<Body> toBeDeleted = new ArrayList<Body>();
+
+    private InputManager inputManager;
+    private int secs;
+    private int timeToSpawn;
 
     public MiniGame (PlayScreen screen,
                      Kroy game,
-                     FireEngine player) {
+                     FireEngine player,
+                     int secs) {
         this.game = game;
         this.screen=screen;
         this.hud=screen.hud;
         this.ogPlayer=player;
         this.ogPosition=player.getBody().getPosition();
+        this.secs = secs*60;
 
         this.spriteHandler = new SpriteHandlerMini(this);
-
-
+        this.timeToSpawn=0;
     }
 
     @Override
@@ -74,16 +79,61 @@ public class MiniGame implements Screen {
 
         createCamera();
 
+        this.inputManager=new InputManager(gameCam);
+
         this.player = createMiniFireEngine(ogPlayer);
         player.miniSpawn();
     }
 
-    public int l = 100;
-
-    public void update() {
+    public void update(float delta) {
         world.step(1/60f,6,2);
 
+        destroyObjects();
+
+        //listen to inputs
+        inputManager.handleMiniPlayerInput(player, delta, game);
+
+        //spawn projectiles
+        handleGooShots();
+
+        //check collisions
+
         hud.update();
+    }
+
+    public void handleGooShots(){
+        this.timeToSpawn--;
+        if (this.timeToSpawn<=0){
+            //actual dimensions of box: 10 by 7.5
+            Random r = new Random();
+            Vector2 position = new Vector2();
+            int side = r.nextInt(4); //0 is W, 1 is N, 2 is E, 3 is S
+            if (side == 0 || side == 2) {
+                float len = r.nextFloat()*7.5f;
+                if (side==0) position = new Vector2(0,len);
+                if (side==2) position = new Vector2(10,len);
+            }
+            if (side == 1 || side == 3) {
+                float len = r.nextFloat()*10f;
+                if (side==1) position = new Vector2(len,7.5f);
+                if (side==3) position = new Vector2(len,0);
+            }
+            GooProjectileMini goo = new GooProjectileMini(this,new Vector2(0.5f,0.5f),150f, Kroy.EXPLOSIVE_PROJECTILE_TEXTURE);
+
+            Vector2 direction = new Vector2(
+                    player.getBody().getPosition().x-position.x,
+                    player.getBody().getPosition().y-position.y);
+            double length = Math.sqrt(   (direction.x*direction.x)+
+                                        (direction.y*direction.y) );
+            Vector2 unitDirection = new Vector2(
+                    (float) (direction.x/length),
+                    (float) (direction.y/length)
+            );
+
+            goo.miniSpawn(position,unitDirection);
+
+            this.timeToSpawn=30;
+        }
     }
 
     public void updatePlayerScore(int delta){
@@ -99,10 +149,8 @@ public class MiniGame implements Screen {
         Gdx.gl.glClearColor(0.57f, 0.77f, 0.85f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        update();
+        update(delta);
 
-        // Render HUD
-        batch.setProjectionMatrix(hud.stage.getCamera().combined);
         batch.setProjectionMatrix(gameCam.combined);
 
         batch.begin();
@@ -113,8 +161,9 @@ public class MiniGame implements Screen {
 
         hud.stage.draw();
 
-        l--;
-        if (l==0) {
+
+        secs--;
+        if (secs==0) {
             endGame();
         }
     }
@@ -125,7 +174,15 @@ public class MiniGame implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        gamePort.update(width, height, true);
+    }
 
+    /**
+     * called when the mini truck takes damage, updates the real truck appropriately.
+     * @param damageTaken the amount of damage taken by the mini truck.
+     */
+    public void damageRealTruck(int damageTaken) {
+        this.ogPlayer.takeDamage(damageTaken);
     }
 
     /**
@@ -138,10 +195,9 @@ public class MiniGame implements Screen {
     {
         gameCam = new OrthographicCamera();
         // Create a FitViewPort to maintain aspect ratio across screen sizes
-        gamePort =
-                new ExtendViewport(
-                        Kroy.V_WIDTH / ( Kroy.PPM * Kroy.CAMERA_SCALAR ),
-                        Kroy.V_HEIGHT / ( Kroy.PPM * Kroy.CAMERA_SCALAR ),
+        gamePort = new FitViewport(
+                Kroy.V_WIDTH / ( Kroy.PPM * Kroy.CAMERA_SCALAR ),
+                Kroy.V_HEIGHT / ( Kroy.PPM * Kroy.CAMERA_SCALAR ),
                         gameCam);
         gameCam.position.set(gamePort.getWorldWidth(),
                 gamePort.getWorldHeight(),
@@ -151,6 +207,17 @@ public class MiniGame implements Screen {
     public void destroyBody(Body toDestroy)
     {
         this.toBeDeleted.add(toDestroy);
+    }
+
+    /**
+     * Destroys all objects queued for deletion from the world and removes
+     * them from the queue
+     */
+    private void destroyObjects() {
+        for (int i = 0; i < this.toBeDeleted.size(); i++) {
+            this.world.destroyBody(this.toBeDeleted.get(i));
+            this.toBeDeleted.remove(i);
+        }
     }
 
     public SpriteHandlerMini getSpriteHandler(){
