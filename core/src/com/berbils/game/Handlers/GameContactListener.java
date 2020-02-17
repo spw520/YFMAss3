@@ -117,10 +117,6 @@ public class GameContactListener implements ContactListener
 			this.getProjectilesObject(fixtureAUserData, fixtureBUserData)
 				.collided(this.getProjectilesFixture(fixtureA, fixtureB));
 		}
-
-		else {
-			return;
-		}
 		}
 
 		/***
@@ -158,9 +154,6 @@ public class GameContactListener implements ContactListener
 			this.getFireEngineObject(fixtureAUserData,
 					fixtureBUserData).leaveFireStation();
 		}
-		else {
-			return;
-		}
 		}
 
 
@@ -176,7 +169,7 @@ public class GameContactListener implements ContactListener
 
 	/**
 	 *  A Method to check if the two objects colliding are a fire engine and a
-	 *  @{@link Tower} sensor, telling us it is either in range or out of range.
+	 *  Tower sensor, telling us it is either in range or out of range.
 	 *
  	 * @param obj1 one of the objects in the collision
 	 *
@@ -251,7 +244,7 @@ public class GameContactListener implements ContactListener
             else if (obj2 instanceof AlertSensor) {
                 return ((AlertSensor) obj2).getPatrol();
             }
-            else if (obj2 instanceof AngrySensor) {
+            else if (obj1 instanceof AngrySensor) {
                 return ((AngrySensor) obj2).getPatrol();
             }
             else if (obj2 instanceof AngrySensor) {

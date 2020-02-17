@@ -1,14 +1,10 @@
 package com.berbils.game.Entities.AlienPatrols;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.berbils.game.Entities.AlienPatrols.Sensors.AlertSensor;
 import com.berbils.game.Entities.AlienPatrols.Sensors.AngrySensor;
 import com.berbils.game.Entities.EntityTypes.BoxGameEntity;
-import com.berbils.game.Entities.EntityTypes.CircleGameEntity;
-import com.berbils.game.Entities.ProjectileSpawners.ProjectileTypes.Explosion;
-import com.berbils.game.Entities.ProjectileSpawners.Weapon;
 import com.berbils.game.Entities.Towers.Tower;
 import com.berbils.game.Kroy;
 import com.berbils.game.Screens.PlayScreen;
@@ -16,16 +12,15 @@ import com.berbils.game.Screens.PlayScreen;
 import java.util.Random;
 
 /**
- * Creates a tower game object, an enemy object that attacks if the player
- * gets within a set range
+ * Creates a patrol entity
  */
 public class AlienPatrol extends BoxGameEntity
 {
-    /** The boolean for telling the patrol whether a target is within it's range.
+    /** The boolean for telling the patrol whether a target is within it's alert range
      */
     private boolean isActive;
 
-    /** The boolean for telling the patrol whether it should go attack a target.
+    /** The boolean for telling the patrol whether it is busy attacking a target
      */
     private boolean isAngry;
 
@@ -47,11 +42,6 @@ public class AlienPatrol extends BoxGameEntity
      * direction or standing still.
      */
     private boolean isMoving;
-
-    /** The current target for the patrol to move towards, if not angry it is
-     * set to null.
-     */
-    private Body currentTarget;
 
     /** The file path to the texture for when the patrol is just chilling */
     private String passivePatrolTexture;
@@ -77,7 +67,7 @@ public class AlienPatrol extends BoxGameEntity
 
     /** The tower the patrol belongs to, and whether or not that tower is still alive */
     private Tower tower;
-    public Boolean towerAlive;
+    private Boolean towerAlive;
 
     /** The current location the patrol is moving towards directly */
     private Vector2 moveLoc;
@@ -138,7 +128,6 @@ public class AlienPatrol extends BoxGameEntity
 
         this.defineStats(alertRange,
                 angryRange,
-                vec,
                 textureFilePathDisengaged,
                 textureFilePathAlert,
                 textureFilePathAngry);
@@ -154,8 +143,6 @@ public class AlienPatrol extends BoxGameEntity
      *
      * @param angryRange            The angry range of the patrol in meters
      *
-     * @param vec					The diameter of the patrol base in meters
-     *
      * @param textureDisengaged	The file path for the texture for when
      *                              the patrol does not have a target in
      *                              range
@@ -169,7 +156,6 @@ public class AlienPatrol extends BoxGameEntity
     private void defineStats(
             float alertRange,
             float angryRange,
-            Vector2 vec,
             String textureDisengaged,
             String textureEngaged,
             String textureAngry)
@@ -226,20 +212,6 @@ public class AlienPatrol extends BoxGameEntity
     }
 
     /**
-     * Called when hit by a water projectile
-     */
-
-    public void onHit() {
-        if(this.towerAlive) {
-            //set tower as current destination
-        }
-        else {
-            this.onDeath();
-        }
-    }
-
-
-    /**
      * Called when a truck enters the angry range. Sets the patrol to be angry, moving towards the player
      * in mindless fury. It stops after two seconds of a faster lunge.
      *
@@ -291,6 +263,9 @@ public class AlienPatrol extends BoxGameEntity
         return this.entityBody.getPosition();
     }
 
+    /**
+     * Sets the sprite to the appropriate type depending on whether its angry, alert or resting.
+     */
     private void updateSprite() {
         if (this.isAngry) {
             this.spriteHandler.setSpriteTexture(this.entityFixture,
@@ -326,6 +301,7 @@ public class AlienPatrol extends BoxGameEntity
         this.getBody().setLinearVelocity(new Vector2(0,0));
     }
 
+    /** Called when the patrol is hit by a water projectile. */
     public void getHit(){
         if (!this.isRunning){
             this.isRunning=true;
@@ -356,16 +332,17 @@ public class AlienPatrol extends BoxGameEntity
         }
     }
 
-    public boolean reachedTower(){
+    /** A function that returns whether the patrol is on its tower */
+    private boolean reachedTower(){
         if(!this.towerAlive) return false;
-        else if(Math.abs(this.getLocation().x-this.tower.getBody().getPosition().x)<0.1f &&
-                Math.abs(this.getLocation().y-this.tower.getBody().getPosition().y)<0.1f){
-            return true;
+        else {
+            return Math.abs(this.getLocation().x - this.tower.getBody().getPosition().x) < 0.1f &&
+                    Math.abs(this.getLocation().y - this.tower.getBody().getPosition().y) < 0.1f;
         }
-        else return false;
     }
 
-    public void reset(){
+    /** Resets the patrol to its default state*/
+    private void reset(){
         this.isAngry=false;
         this.isActive=false;
         this.isMoving=false;

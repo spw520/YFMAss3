@@ -84,7 +84,7 @@ public class PlayScreen implements Screen
 	public Weapon basicWeapon,spokeWeapon,randomDirWeapon,baseFireEngWeapon,
 		largeFireEngWeapon, alienTruckWeapon;
 	// Game objects
-	/** Array containing all fire engine instances */;
+	/** Array containing all fire engine instances */
 	private ArrayList<FireEngine> fireEngineArrayList = new ArrayList<>();
 
 	/** large slower fire engine with a higher damage weapon and higher

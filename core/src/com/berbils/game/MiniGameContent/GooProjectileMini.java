@@ -4,18 +4,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.berbils.game.Entities.EntityTypes.BoxGameEntity;
-import com.berbils.game.Entities.ProjectileSpawners.Weapon;
 import com.berbils.game.Handlers.GameContactListener;
-import com.berbils.game.Handlers.SpriteHandler;
 import com.berbils.game.Handlers.SpriteHandlerMini;
 import com.berbils.game.Kroy;
 import com.berbils.game.Screens.MiniGame;
-import com.berbils.game.Screens.PlayScreen;
 
 /**
  * A class based on the entity class but made for the minigame instead of the PlayScreen
- *
  */
 public class GooProjectileMini
 {
@@ -23,54 +18,54 @@ public class GooProjectileMini
     public Vector2 position;
 
     /**The size dimensions of the entity in meters */
-    protected Vector2 sizeDims;
+    private Vector2 sizeDims;
 
     /**The Screen the entity object is located and will be created */
     public MiniGame screen;
-    /**
-     * The world attached the body would be created on and is attached to
+
+    /** The world attached the body would be created on and is attached to
      * the screen
      * */
-    protected World world;
+    private World world;
 
     /** The entities Box2D body */
-    protected Body entityBody;
+    private Body entityBody;
 
     /** The Entities Box2D current body definition */
-    protected BodyDef entityBodyDefinition;
+    private BodyDef entityBodyDefinition;
 
     /** The Entities Box2D fixture */
-    protected Fixture entityFixture;
+    private Fixture entityFixture;
 
     /** The Entities Box2D current fixture definition */
-    protected FixtureDef entityFixtureDefinition;
-    /** A boolean stating whether the Box2D body is static (For true) or
-     * Dynamic (For false)
+    private FixtureDef entityFixtureDefinition;
+
+    /** A boolean stating whether the Box2D body is static or dynamic. Set to false.
      */
-    protected boolean isStatic;
+    private boolean isStatic;
 
     /** The object attached to body and fixture userData */
-    protected Object userData;
+    private Object userData;
 
     /** The shape of the entity*/
-    protected Shape entityShape;
+    private Shape entityShape;
 
     /** The spritehandler attached to the screen */
-    protected SpriteHandlerMini spriteHandler;
+    private SpriteHandlerMini spriteHandler;
 
     /** The entities sprite */
-    protected Sprite entitySprite;
+    private Sprite entitySprite;
 
     /** The draw layer the sprite will be drawn on, used to determine draw
      * order. 0 Is the bottom layer
      */
-    protected int spriteLayer;
+    private int spriteLayer;
 
     /** The category bits used for Box2D collision filtering */
-    protected short catBits;
+    private short catBits;
 
     /** The mask bits used for Box2D collision filtering */
-    protected short maskBits;
+    private short maskBits;
 
     /** The entities texture, set to null if the entity doesn't need a sprite */
     private Texture entityTexture;
@@ -80,36 +75,24 @@ public class GooProjectileMini
     private float linDamp;
 
     /**
-     * A constant speed multiplier used by the {@link com.berbils.game.Tools.InputManager} to change
-     * the amount of force applied and therefore the speed
+     * A constant speed multiplier used to determine how fast the bullet flies
      */
     public float speed;
-
-    /**
-     * A boolean used to check whether the fire engine is "alive" to
-     * determine whether it should be despawned and destroyed.Is also
-     * required to prevent multiple accidental onDeath() calls
-     */
-    private boolean isAlive;
 
     public String textureFilePath;
 
     /**
-     * This constructor assigns required variables and sets up the weapon class
-     * instance for use.It only creates a fixture and body definition, no
-     * sprite, body or fixture generation.
+     * A constructor to create the projectile object. Creates all the definitions without spawning yet.
      *
      * @param screen 			The Screen the entity object is located and will be
      *               			created
      *
      * @param dimensions 		The diameter of the bullet
      *
-     * @param speed 			The speed of the fire engine, how fast it
-     *                          will move
+     * @param speed 			The speed of the bullet
      *
      * @param textureFilePath  The file path to the sprite texture
-     *                         Note - If passd as null no sprite will be
-     *                         created
+     *
      */
     public GooProjectileMini(
             MiniGame screen,
@@ -131,22 +114,18 @@ public class GooProjectileMini
 
         this.textureFilePath=textureFilePath;
 
-        this.defineShape();
+        defineShape();
         createFixtureDefinition();
         createBox2Definition();
         setFixtureCategory(Kroy.CAT_PROJECTILE_ENEMY, Kroy.MASK_ENEMY_PROJECTILE);
 
-        if(textureFilePath == null)
-        {
-            this.entityTexture = null;
-        }
-        else {
-            this.entityTexture = Kroy.assets.get(textureFilePath, Texture.class);
-        }
+        this.entityTexture = Kroy.assets.get(textureFilePath, Texture.class);
     }
 
+    /**
+     * Spawns the projectile with the given position and direction.
+     */
     public void miniSpawn(Vector2 position, Vector2 direction) {
-        //because the actual size of the minigame window is 10x7,5
         setSpawnPosition(position);
         createBodyCopy();
         createFixtureCopy();
@@ -173,7 +152,7 @@ public class GooProjectileMini
      */
     public Vector2 getSizeDims() { return this.sizeDims.cpy(); }
 
-    protected void createBox2Definition()
+    private void createBox2Definition()
     {
         this.entityBodyDefinition = new BodyDef();
         this.entityBodyDefinition.position.set(this.position);
@@ -199,7 +178,7 @@ public class GooProjectileMini
     /**
      * method for creating Box2D fixture definition
      */
-    protected void createFixtureDefinition()
+    private void createFixtureDefinition()
     {
         this.entityFixtureDefinition = new FixtureDef();
         this.entityFixtureDefinition.shape = this.entityShape;
@@ -209,13 +188,13 @@ public class GooProjectileMini
     /** Create a fixture using the Entities already defined fixture
      * definition
      */
-    public void createFixtureCopy() { this.entityFixture = this.entityBody.createFixture(this.entityFixtureDefinition); }
+    private void createFixtureCopy() { this.entityFixture = this.entityBody.createFixture(this.entityFixtureDefinition); }
 
     /**
      * Creates a sprite attached to the entitity
      * Note - will not create a sprite if its texture is null
      */
-    public void createSprite()
+    private void createSprite()
     {
         if (this.entityTexture != null) {
             this.entitySprite = this.spriteHandler.createNewSprite(this.entityFixture,
@@ -238,7 +217,7 @@ public class GooProjectileMini
      *  Sets the angular dampening for all future Box2d bodies created
      * @param angleDamp The amount of angular dampening to apply to a body
      */
-    protected void setBodyDefAngularDampening(float angleDamp)
+    private void setBodyDefAngularDampening(float angleDamp)
     {
         this.entityBodyDefinition.angularDamping = angleDamp;
     }
@@ -247,7 +226,7 @@ public class GooProjectileMini
      *  Sets the linear dampening for all future Box2d bodies created
      * @param linDamp The amount of angular dampening to apply to a body
      */
-    protected void setBodyDefLinearDampening(float linDamp)
+    private void setBodyDefLinearDampening(float linDamp)
     {
         this.entityBodyDefinition.linearDamping = linDamp;
     }
@@ -259,7 +238,7 @@ public class GooProjectileMini
      * @param catBits The category bits used for Box2D collision filtering
      * @param maskBits The mask bits used for Box2D collision filtering
      */
-    public void setFixtureCategory(short catBits, short maskBits)
+    private void setFixtureCategory(short catBits, short maskBits)
     {
         this.entityFixtureDefinition.filter.categoryBits = catBits;
         this.entityFixtureDefinition.filter.maskBits = maskBits;
@@ -280,7 +259,7 @@ public class GooProjectileMini
      *
      * @param pos The position in meters all future bodies will spawn at
      */
-    public void setSpawnPosition(Vector2 pos)
+    private void setSpawnPosition(Vector2 pos)
     {
         this.entityBodyDefinition.position.set(pos);
     }
@@ -296,6 +275,9 @@ public class GooProjectileMini
         this.entityShape = shape;
     }
 
+    /**
+     * Sets the velocity of the projectile. Takes a directional unit vector, then multiplies it by speed
+     */
     public void setVelocity(Vector2 direction) {
         Vector2 speedDirection = new Vector2(direction.x*speed,direction.y*speed);
         this.entityBody.applyForce(speedDirection,this.entityBody.getWorldCenter(),
