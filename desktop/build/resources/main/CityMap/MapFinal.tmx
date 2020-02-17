@@ -112,7 +112,7 @@
    </properties>
    <ellipse/>
   </object>
-  <object id="39" name="tower5" x="1914.5" y="863.5" width="350" height="350">
+  <object id="39" name="tower5" x="1890.5" y="833.5" width="413" height="412">
    <properties>
     <property name="health" type="int" value="1500"/>
     <property name="size" type="float" value="3"/>
