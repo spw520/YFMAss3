@@ -52,7 +52,8 @@ public class FireStation extends BoxGameEntity
 
 	public void enterStationScreen(FireEngine fireEngine) {
 		if(fireEngine.onFireSTation) {
-			System.out.println(StationRepair);
+			//Edit @author Alex Dawson Added an if statement so that repair is
+			// only called when the fire station is not destroyed
 			if (StationRepair == true){
 				fireEngine.reset();
 			}

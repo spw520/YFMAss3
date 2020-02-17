@@ -15,6 +15,9 @@ public class MenuScreen extends BasicMenu
 	/** The file path to the title texture to display at the top of the screen
 	 */
 	private static String titlePath = Kroy.KROY_TITLE_TITLE;
+
+	//private static int highscore;
+
 	/** An array containing the text that will appear on its own button */
 	private static String[] menuOptions = new String[] { "New Game", "Quit" };
 

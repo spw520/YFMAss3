@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.berbils.game.Entities.AlienPatrols.AlienPatrol;
 import com.berbils.game.Entities.EntityTypes.CircleGameEntity;
 import com.berbils.game.Entities.ProjectileSpawners.ProjectileTypes.Explosion;
@@ -143,6 +144,17 @@ public class Tower extends CircleGameEntity
 		this.createSensor();
 		this.setWeapon(weapon);
 		this.createHealthBar();
+
+			/**New @author Alex Dawson
+			 * added a timer to the bases which calls a function to increase their
+			 * health every 60 seconds so that the game becomes harder over time
+			 */
+		Timer.schedule(new Timer.Task(){
+			@Override
+			public void run(){
+				TowerBuff();
+			}
+			}, 60, 60);
 		}
 
 	/**
@@ -290,7 +302,19 @@ public class Tower extends CircleGameEntity
 		}
 		}
 
-	/**
+		/**
+		 * NEW @author Alex Dawson this section increases the health and range of the
+		 * towers as part of the increasing difficulty feature
+		 */
+	public void TowerBuff(){
+		this.maxHealth += 100;
+		this.range *= 1.1;
+		//Redraw the towers sensor with the new size
+		this.screen.destroyBody(this.towerSensor.getFixture().getBody());
+		createSensor();
+	}
+
+		/**
 	 *  Called upon tower death
 	 *  Updates the screen counter for towers alive
 	 *  If the tower is the last one alive the game screen is updated to the
