@@ -114,6 +114,8 @@ public class Tower extends CircleGameEntity
 	 *
 	 * @param textureFilePathEngaged      The file path for the texture for when
 	 * 	                            the tower does have a target in range
+	 *
+	 *
 	 */
 	public Tower(
 		float diameter,
@@ -194,7 +196,7 @@ public class Tower extends CircleGameEntity
 		this.healthBarPos = this.position.cpy().add(0, diam * 1.5f);
 		this.healthBarSize = new Vector2(diam * 2, 0.1f);
 
-		this.patrols = new AlienPatrol[2];
+		this.patrols = new AlienPatrol[4];
 		this.numOfPatrols=0;
 		this.timeTillSpawn=60;
 
@@ -263,7 +265,7 @@ public class Tower extends CircleGameEntity
 		}
 
 	/** spawns a new alien patrol */
-	public void spawnPatrol(){
+	private void spawnPatrol(){
 		if (numOfPatrols<patrols.length) {
 			patrols[numOfPatrols] = new AlienPatrol(
 					this,
