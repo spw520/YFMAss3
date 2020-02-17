@@ -84,7 +84,7 @@ public class PlayScreen implements Screen
 	public Weapon basicWeapon,fastWeapon, spokeWeapon, bigSpokeWeapon, randomDirWeapon,baseFireEngWeapon,
 		largeFireEngWeapon, alienTruckWeapon;
 	// Game objects
-	/** Array containing all fire engine instances */;
+	/** Array containing all fire engine instances */
 	private ArrayList<FireEngine> fireEngineArrayList = new ArrayList<>();
 
 	/** large slower fire engine with a higher damage weapon and higher
@@ -423,24 +423,28 @@ public class PlayScreen implements Screen
 	 *  fireEngineArrayList
 	 */
   	private void createFireEngines() {
+  		//the normal fire truck
 		this.normalFireEngine =
 			new FireEngine(
-				this, new Vector2(1, 0.5f), this.baseFireEngWeapon, 400, 20, 100,
+				this, new Vector2(1, 0.5f), this.baseFireEngWeapon, 800, 20, 100,
 				Kroy.BASE_FIRE_ENGINE_TEX);
 
+		//a bigger truck with high damage and water, but can't dodge very well and doesn't fit through certain bits of the map
 		this.largeFireEngine =
 			new FireEngine(
-				this, new Vector2(1.5f, 1), this.largeFireEngWeapon, 800, 15, 200,
+				this, new Vector2(1.5f, 1), this.largeFireEngWeapon, 1400, 15, 200,
 				Kroy.HEAVY_FIRE_ENGINE_TEX);
 
+		//small truck, very fast, with less water
 		this.smallFireEngine =
             new FireEngine(
-                    this, new Vector2(0.8f,0.4f), this.baseFireEngWeapon, 400, 25, 75,
+                    this, new Vector2(0.8f,0.4f), this.baseFireEngWeapon, 700, 25, 75,
                     Kroy.SMALL_FIRE_ENGINE_TEX);
 
+		//slightly smaller truck with a triple spray
 		this.alienFireEngine =
 				new FireEngine(
-					this, new Vector2(0.8f,0.4f), this.alienTruckWeapon, 400, 25, 75,
+					this, new Vector2(0.9f,0.45f), this.alienTruckWeapon, 1000, 20, 75,
 					Kroy.ALIEN_FIRE_ENGINE_TEX);
 
 		this.fireEngineArrayList.add(this.normalFireEngine);
@@ -496,8 +500,6 @@ public class PlayScreen implements Screen
 		{
 		gamePort.update(width, height);
 		}
-
-
 
 	@Override
      public void pause()

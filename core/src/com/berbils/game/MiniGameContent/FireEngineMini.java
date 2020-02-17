@@ -4,13 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.berbils.game.Entities.EntityTypes.BoxGameEntity;
-import com.berbils.game.Entities.ProjectileSpawners.Weapon;
-import com.berbils.game.Handlers.SpriteHandler;
 import com.berbils.game.Handlers.SpriteHandlerMini;
 import com.berbils.game.Kroy;
 import com.berbils.game.Screens.MiniGame;
-import com.berbils.game.Screens.PlayScreen;
 
 /**
  * A class based on the entity class but made for the minigame instead of the PlayScreen
@@ -22,7 +18,7 @@ public class FireEngineMini
     public Vector2 position;
 
     /**The size dimensions of the entity in meters */
-    protected Vector2 sizeDims;
+    private Vector2 sizeDims;
 
     /**The Screen the entity object is located and will be created */
     public MiniGame screen;
@@ -30,46 +26,46 @@ public class FireEngineMini
      * The world attached the body would be created on and is attached to
      * the screen
      * */
-    protected World world;
+    private World world;
 
     /** The entities Box2D body */
-    protected Body entityBody;
+    private Body entityBody;
 
     /** The Entities Box2D current body definition */
-    protected BodyDef entityBodyDefinition;
+    private BodyDef entityBodyDefinition;
 
     /** The Entities Box2D fixture */
-    protected Fixture entityFixture;
+    private Fixture entityFixture;
 
     /** The Entities Box2D current fixture definition */
-    protected FixtureDef entityFixtureDefinition;
+    private FixtureDef entityFixtureDefinition;
     /** A boolean stating whether the Box2D body is static (For true) or
      * Dynamic (For false)
      */
-    protected boolean isStatic;
+    private boolean isStatic;
 
     /** The object attached to body and fixture userData */
-    protected Object userData;
+    private Object userData;
 
     /** The shape of the entity*/
-    protected Shape entityShape;
+    private Shape entityShape;
 
     /** The spritehandler attached to the screen */
-    protected SpriteHandlerMini spriteHandler;
+    private SpriteHandlerMini spriteHandler;
 
     /** The entities sprite */
-    protected Sprite entitySprite;
+    private Sprite entitySprite;
 
     /** The draw layer the sprite will be drawn on, used to determine draw
      * order. 0 Is the bottom layer
      */
-    protected int spriteLayer;
+    private int spriteLayer;
 
     /** The category bits used for Box2D collision filtering */
-    protected short catBits;
+    private short catBits;
 
     /** The mask bits used for Box2D collision filtering */
-    protected short maskBits;
+    private short maskBits;
 
     /** The entities texture, set to null if the entity doesn't need a sprite */
     private Texture entityTexture;
@@ -79,23 +75,10 @@ public class FireEngineMini
     private float linDamp;
 
     /**
-     * The current health of the fire engine, once this reaches zero the
-     * fire engine "dies" and the onDeath() method is called
-     */
-    public int currentHealth;
-
-    /**
      * A constant speed multiplier used by the {@link com.berbils.game.Tools.InputManager} to change
      * the amount of force applied and therefore the speed
      */
     public float speed;
-
-    /**
-     * A boolean used to check whether the fire engine is "alive" to
-     * determine whether it should be despawned and destroyed.Is also
-     * required to prevent multiple accidental onDeath() calls
-     */
-    private boolean isAlive;
 
     public String textureFilePath;
 
@@ -112,10 +95,6 @@ public class FireEngineMini
      * @param speed 			The speed of the fire engine, how fast it
      *                          will move
      *
-     * @param health			The max health for the fire engine instance
-     *                          and represents the maximum amount of
-     *                          damage the fire engine can take before death
-     *
      * @param textureFilePath  The file path to the sprite texture
      *                         Note - If passd as null no sprite will be
      *                         created
@@ -124,7 +103,6 @@ public class FireEngineMini
             MiniGame screen,
             Vector2 dimensions,
             float speed,
-            int health,
             String textureFilePath)
     {
         this.screen=screen;
@@ -134,25 +112,19 @@ public class FireEngineMini
         this.angDamp=10;
         this.linDamp=10;
         this.spriteHandler=this.screen.getSpriteHandler();
-        this.currentHealth=health;
         this.world = screen.getWorld();
         this.spriteLayer=2;
         this.speed=speed;
 
         this.textureFilePath=textureFilePath;
 
-        this.defineShape();
+        defineShape();
         createFixtureDefinition();
         createBox2Definition();
         setFixtureCategory(Kroy.CAT_FRIENDLY, Kroy.MASK_FRIENDLY);
 
-        if(textureFilePath == null)
-        {
-            this.entityTexture = null;
+        this.entityTexture = Kroy.assets.get(textureFilePath, Texture.class);
         }
-        else {
-            this.entityTexture = Kroy.assets.get(textureFilePath, Texture.class);
-        }    }
 
     /**
      * Method for reducing the current health of the fire engine instance and
@@ -162,10 +134,13 @@ public class FireEngineMini
      */
     public void takeDamage(int damageTaken)
     {
-        this.currentHealth -= damageTaken;
         this.screen.updatePlayerScore(-damageTaken);
         this.screen.damageRealTruck(damageTaken);
     }
+
+    /**
+     * Spawns the truck in the center of the screen
+     */
     public void miniSpawn() {
         //because the actual size of the minigame window is 10x7,5
         setSpawnPosition(new Vector2(5,3.75f));
@@ -194,7 +169,7 @@ public class FireEngineMini
      */
     public Vector2 getSizeDims() { return this.sizeDims.cpy(); }
 
-    protected void createBox2Definition()
+    private void createBox2Definition()
     {
         this.entityBodyDefinition = new BodyDef();
         this.entityBodyDefinition.position.set(this.position);
@@ -210,15 +185,6 @@ public class FireEngineMini
         }
     }
 
-    /**
-     *  Method for creating Box2D body based upon entity body definition
-     */
-    protected void createBox2DBody()
-    {
-        this.createBox2Definition();
-        this.entityBody = this.world.createBody(this.entityBodyDefinition);
-    }
-
     /** Create a body using the Entities already defined body definition
      *  The alternate version takes a specific world to spawn in, used for the minigame*/
     public void createBodyCopy()
@@ -229,33 +195,24 @@ public class FireEngineMini
     /**
      * method for creating Box2D fixture definition
      */
-    protected void createFixtureDefinition()
+    private void createFixtureDefinition()
     {
         this.entityFixtureDefinition = new FixtureDef();
         this.entityFixtureDefinition.shape = this.entityShape;
         this.setFixtureCategory(catBits, maskBits);
     }
 
-    /**
-     * Method for creating Box2D fixture based upon entity fixture definition
-     */
-    protected void createFixture()
-    {
-        this.createFixtureDefinition();
-        this.entityFixture = this.entityBody.createFixture(this.entityFixtureDefinition);
-    }
-
     /** Create a fixture using the Entities already defined fixture
      * definition
      */
-    public void createFixtureCopy() { this.entityFixture = this.entityBody.createFixture(this.entityFixtureDefinition); }
+    private void createFixtureCopy() { this.entityFixture = this.entityBody.createFixture(this.entityFixtureDefinition); }
 
 
     /**
      * Creates a sprite attached to the entitity
      * Note - will not create a sprite if its texture is null
      */
-    public void createSprite()
+    private void createSprite()
     {
         if (this.entityTexture != null) {
             this.entitySprite = this.spriteHandler.createNewSprite(this.entityFixture,
@@ -278,7 +235,7 @@ public class FireEngineMini
      *  Sets the angular dampening for all future Box2d bodies created
      * @param angleDamp The amount of angular dampening to apply to a body
      */
-    protected void setBodyDefAngularDampening(float angleDamp)
+    private void setBodyDefAngularDampening(float angleDamp)
     {
         this.entityBodyDefinition.angularDamping = angleDamp;
     }
@@ -287,7 +244,7 @@ public class FireEngineMini
      *  Sets the linear dampening for all future Box2d bodies created
      * @param linDamp The amount of angular dampening to apply to a body
      */
-    protected void setBodyDefLinearDampening(float linDamp)
+    private void setBodyDefLinearDampening(float linDamp)
     {
         this.entityBodyDefinition.linearDamping = linDamp;
     }
@@ -299,25 +256,10 @@ public class FireEngineMini
      * @param catBits The category bits used for Box2D collision filtering
      * @param maskBits The mask bits used for Box2D collision filtering
      */
-    public void setFixtureCategory(short catBits, short maskBits)
+    private void setFixtureCategory(short catBits, short maskBits)
     {
         this.entityFixtureDefinition.filter.categoryBits = catBits;
         this.entityFixtureDefinition.filter.maskBits = maskBits;
-    }
-
-    /**Stores the userData to be used for all future body and fixture
-     * creations
-     *
-     * <p> The user data should be an instance of the final subclass
-     *     extending Entity</p>
-     *
-     * @param userData The userData you wish all future body and fixtures to
-     *                    have, should be an instance of the final subclass
-     *                    extending Entity
-     */
-    public void storeUserData(Object userData)
-    {
-        this.userData = userData;
     }
 
     /**
@@ -336,7 +278,7 @@ public class FireEngineMini
      *
      * @param pos The position in meters all future bodies will spawn at
      */
-    public void setSpawnPosition(Vector2 pos)
+    private void setSpawnPosition(Vector2 pos)
     {
         this.entityBodyDefinition.position.set(pos);
     }
@@ -366,5 +308,4 @@ public class FireEngineMini
         this.entityFixture.setUserData(userData);
         this.entityBody.setUserData(userData);
     }
-
 }
