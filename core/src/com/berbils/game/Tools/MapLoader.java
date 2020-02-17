@@ -169,8 +169,13 @@ public final class MapLoader {
       Weapon weapon;
       if (weaponStr.equals("basicWeapon")) {
         weapon = screen.basicWeapon;
+      //Add @author Alex Dawson added fastWeapon and bigSpokeWeapon options
+      }else if (weaponStr.equals("fastWeapon")){
+        weapon = screen.fastWeapon;
       } else if (weaponStr.equals("spokeWeapon")) {
         weapon = screen.spokeWeapon;
+      } else if (weaponStr.equals("bigSpokeWeapon")){
+        weapon = screen.bigSpokeWeapon;
       } else if (weaponStr.equals("randomDirWeapon")) {
         weapon = screen.randomDirWeapon;
       } else if(weaponStr.equals("largeFireEngWeapon"))

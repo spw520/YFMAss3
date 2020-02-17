@@ -81,7 +81,7 @@ public class PlayScreen implements Screen
 
 
 	/** Pre-defined weapon types for the Play Screen */
-	public Weapon basicWeapon,spokeWeapon,randomDirWeapon,baseFireEngWeapon,
+	public Weapon basicWeapon,fastWeapon, spokeWeapon, bigSpokeWeapon, randomDirWeapon,baseFireEngWeapon,
 		largeFireEngWeapon, alienTruckWeapon;
 	// Game objects
 	/** Array containing all fire engine instances */;
@@ -386,10 +386,13 @@ public class PlayScreen implements Screen
 
 	/**
 	 * Creates the pre-defined weapons and adds them to weaponList
+	 * Add @author Alex Dawson added new options for fastWeapon and bigSpokeWeapon
 	 */
 	private void createWeapons() {
     this.basicWeapon = new BasicProjectileSpawner(2, this.standardProjectile);
+    this.fastWeapon = new BasicProjectileSpawner(4, this.standardProjectile);
     this.spokeWeapon = new SpokeProjectileSpawner(3, this.smallFastProjectile, 4);
+    this.bigSpokeWeapon = new SpokeProjectileSpawner(4, this.smallFastProjectile, 5);
     this.randomDirWeapon =
         new RandomDirProjectileSpawner( 0.5, this.slowLargeExplosiveProjectile, 6);
     this.baseFireEngWeapon = new BasicProjectileSpawner( 20, this.waterProjectile);
@@ -397,7 +400,9 @@ public class PlayScreen implements Screen
     this.alienTruckWeapon = new AlienProjectileSpawner( 10, this.waterProjectile);
 
     this.weaponList.add(basicWeapon);
+    this.weaponList.add(fastWeapon);
     this.weaponList.add(spokeWeapon);
+    this.weaponList.add(bigSpokeWeapon);
     this.weaponList.add(randomDirWeapon);
     this.weaponList.add(baseFireEngWeapon);
     this.weaponList.add(largeFireEngWeapon);
